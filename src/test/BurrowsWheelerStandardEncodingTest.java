@@ -76,4 +76,34 @@ public class BurrowsWheelerStandardEncodingTest {
         assertTrue(this.uut.isAlmostEmpty());
     }
 
+    @Test
+    public void testAlgorithm2() {
+        DebugQueue queue = this.core.getRegisteredAlgorithm(BurrowsWheelerTransformationCore.Algorithms.BW_PERMUTATIONS_ENCODE);
+        this.uut.launch("backpapier");
+        while (!this.reachedEnd) {
+            queue.stepForward();
+        }
+        assertEquals("bpraipckae", this.uut.getResult());
+        assertEquals(2, this.uut.getIndexResult());
+        while (!this.reachedBegin) {
+            queue.stepBack();
+        }
+        assertTrue(this.uut.isAlmostEmpty());
+    }
+
+    @Test
+    public void testAlgorithm3() {
+        DebugQueue queue = this.core.getRegisteredAlgorithm(BurrowsWheelerTransformationCore.Algorithms.BW_PERMUTATIONS_ENCODE);
+        this.uut.launch("mississippi");
+        while (!this.reachedEnd) {
+            queue.stepForward();
+        }
+        assertEquals("pssmipissii", this.uut.getResult());
+        assertEquals(4, this.uut.getIndexResult());
+        while (!this.reachedBegin) {
+            queue.stepBack();
+        }
+        assertTrue(this.uut.isAlmostEmpty());
+    }
+
 }
