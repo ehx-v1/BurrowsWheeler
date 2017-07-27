@@ -53,6 +53,20 @@ public class BurrowsWheelerStandardEncodingTest {
     private boolean reachedBegin;
     private boolean reachedEnd;
 
+    private void assertProduces (String input, String expectedResult, int expectedIndexResult) {
+        DebugQueue queue = this.core.getRegisteredAlgorithm(BurrowsWheelerTransformationCore.Algorithms.values()[0]);
+        this.uut.launch(input);
+        while (!this.reachedEnd) {
+            queue.stepForward();
+        }
+        assertEquals(expectedResult, this.uut.getResult());
+        assertEquals(expectedIndexResult, this.uut.getIndexResult());
+        while (!this.reachedBegin) {
+            queue.stepBack();
+        }
+        assertTrue(this.uut.isReset());
+    }
+
     @Before
     public void resetCoreAndAlgorithm() {
         this.core = new BurrowsWheelerTransformationCore(20);
@@ -63,107 +77,37 @@ public class BurrowsWheelerStandardEncodingTest {
 
     @Test
     public void testAlgorithm1() {
-        DebugQueue queue = this.core.getRegisteredAlgorithm(BurrowsWheelerTransformationCore.Algorithms.values()[0]);
-        this.uut.launch("ananas");
-        while (!this.reachedEnd) {
-            queue.stepForward();
-        }
-        assertEquals("snnaaa", this.uut.getResult());
-        assertEquals(0, this.uut.getIndexResult());
-        while (!this.reachedBegin) {
-            queue.stepBack();
-        }
-        assertTrue(this.uut.isReset());
+        assertProduces("ananas", "snnaaa", 0);
     }
 
     @Test
     public void testAlgorithm2() {
-        DebugQueue queue = this.core.getRegisteredAlgorithm(BurrowsWheelerTransformationCore.Algorithms.values()[0]);
-        this.uut.launch("backpapier");
-        while (!this.reachedEnd) {
-            queue.stepForward();
-        }
-        assertEquals("bpraipckae", this.uut.getResult());
-        assertEquals(2, this.uut.getIndexResult());
-        while (!this.reachedBegin) {
-            queue.stepBack();
-        }
-        assertTrue(this.uut.isReset());
+        assertProduces("backpapier", "bpraipckae", 2);
     }
 
     @Test
     public void testAlgorithm3() {
-        DebugQueue queue = this.core.getRegisteredAlgorithm(BurrowsWheelerTransformationCore.Algorithms.values()[0]);
-        this.uut.launch("mississippi");
-        while (!this.reachedEnd) {
-            queue.stepForward();
-        }
-        assertEquals("pssmipissii", this.uut.getResult());
-        assertEquals(4, this.uut.getIndexResult());
-        while (!this.reachedBegin) {
-            queue.stepBack();
-        }
-        assertTrue(this.uut.isReset());
+        assertProduces("mississippi", "pssmipissii", 4);
     }
 
     @Test
     public void testAlgorithm4() {
-        DebugQueue queue = this.core.getRegisteredAlgorithm(BurrowsWheelerTransformationCore.Algorithms.values()[0]);
-        this.uut.launch("sudoku");
-        while (!this.reachedEnd) {
-            queue.stepForward();
-        }
-        assertEquals("uodusk", this.uut.getResult());
-        assertEquals(3, this.uut.getIndexResult());
-        while (!this.reachedBegin) {
-            queue.stepBack();
-        }
-        assertTrue(this.uut.isReset());
+        assertProduces("sudoku", "uodusk", 3);
     }
 
     @Test
     public void testAlgorithm5() {
-        DebugQueue queue = this.core.getRegisteredAlgorithm(BurrowsWheelerTransformationCore.Algorithms.values()[0]);
-        this.uut.launch("mariokartparty");
-        while (!this.reachedEnd) {
-            queue.stepForward();
-        }
-        assertEquals("mkproyitaaarrt", this.uut.getResult());
-        assertEquals(5, this.uut.getIndexResult());
-        while (!this.reachedBegin) {
-            queue.stepBack();
-        }
-        assertTrue(this.uut.isReset());
+        assertProduces("mariokartparty", "mkproyitaaarrt", 5);
     }
 
     @Test
     public void testAlgorithm6() {
-        DebugQueue queue = this.core.getRegisteredAlgorithm(BurrowsWheelerTransformationCore.Algorithms.values()[0]);
-        this.uut.launch("nintendo");
-        while (!this.reachedEnd) {
-            queue.stepForward();
-        }
-        assertEquals("ntneoidn", this.uut.getResult());
-        assertEquals(4, this.uut.getIndexResult());
-        while (!this.reachedBegin) {
-            queue.stepBack();
-        }
-        assertTrue(this.uut.isReset());
+        assertProduces("nintendo", "ntneoidn", 4);
     }
 
     @Test
     public void testAlgorithm7() {
-        DebugQueue queue = this.core.getRegisteredAlgorithm(BurrowsWheelerTransformationCore.Algorithms.values()[0]);
-        this.uut.launch("erdbeere");
-        while (!this.reachedEnd) {
-            queue.stepForward();
-        }
-        assertEquals("drrbeeee", this.uut.getResult());
-        assertEquals(4, this.uut.getIndexResult());
-        while (!this.reachedBegin) {
-            queue.stepBack();
-        }
-        assertTrue(this.uut.isReset());
+        assertProduces("erdbeere", "drrbeeee", 4);
     }
 
 }

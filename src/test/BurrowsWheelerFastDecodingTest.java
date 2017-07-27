@@ -44,6 +44,19 @@ public class BurrowsWheelerFastDecodingTest {
     private boolean reachedBegin;
     private boolean reachedEnd;
 
+    private void assertProduces (String input, int index, String expectedOutput) {
+        DebugQueue queue = this.core.getRegisteredAlgorithm(BurrowsWheelerTransformationCore.Algorithms.values()[0]);
+        this.uut.launch(input, index);
+        while (!this.reachedEnd) {
+            queue.stepForward();
+        }
+        assertEquals(expectedOutput, this.uut.getResult());
+        while (!this.reachedBegin) {
+            queue.stepBack();
+        }
+        assertTrue(this.uut.isReset());
+    }
+
     @Before
     public void resetCoreAndAlgorithm() {
         this.core = new BurrowsWheelerTransformationCore(20);
@@ -54,100 +67,37 @@ public class BurrowsWheelerFastDecodingTest {
 
     @Test
     public void testAlgorithm1() {
-        DebugQueue queue = this.core.getRegisteredAlgorithm(BurrowsWheelerTransformationCore.Algorithms.values()[0]);
-        this.uut.launch("snnaaa", 0);
-        while (!this.reachedEnd) {
-            queue.stepForward();
-        }
-        assertEquals("ananas", this.uut.getResult());
-        while (!this.reachedBegin) {
-            queue.stepBack();
-        }
-        assertTrue(this.uut.isReset());
+        assertProduces("snnaaa", 0, "ananas");
     }
 
     @Test
     public void testAlgorithm2() {
-        DebugQueue queue = this.core.getRegisteredAlgorithm(BurrowsWheelerTransformationCore.Algorithms.values()[0]);
-        this.uut.launch("bpraipckae", 4);
-        while (!this.reachedEnd) {
-            queue.stepForward();
-        }
-        assertEquals("backpapier", this.uut.getResult());
-        while (!this.reachedBegin) {
-            queue.stepBack();
-        }
-        assertTrue(this.uut.isReset());
+        assertProduces("bpraipckae", 4, "backpapier");
     }
 
     @Test
     public void testAlgorithm3() {
-        DebugQueue queue = this.core.getRegisteredAlgorithm(BurrowsWheelerTransformationCore.Algorithms.values()[0]);
-        this.uut.launch("pssmipissii", 4);
-        while (!this.reachedEnd) {
-            queue.stepForward();
-        }
-        assertEquals("mississippi", this.uut.getResult());
-        while (!this.reachedBegin) {
-            queue.stepBack();
-        }
-        assertTrue(this.uut.isReset());
+        assertProduces("pssmipissii", 4, "mississippi");
     }
 
     @Test
     public void testAlgorithm4() {
-        DebugQueue queue = this.core.getRegisteredAlgorithm(BurrowsWheelerTransformationCore.Algorithms.values()[0]);
-        this.uut.launch("uodusk", 3);
-        while (!this.reachedEnd) {
-            queue.stepForward();
-        }
-        assertEquals("sudoku", this.uut.getResult());
-        while (!this.reachedBegin) {
-            queue.stepBack();
-        }
-        assertTrue(this.uut.isReset());
+        assertProduces("uodusk", 3, "sudoku");
     }
 
     @Test
     public void testAlgorithm5() {
-        DebugQueue queue = this.core.getRegisteredAlgorithm(BurrowsWheelerTransformationCore.Algorithms.values()[0]);
-        this.uut.launch("mkproyitaaarrt", 5);
-        while (!this.reachedEnd) {
-            queue.stepForward();
-        }
-        assertEquals("mariokartparty", this.uut.getResult());
-        while (!this.reachedBegin) {
-            queue.stepBack();
-        }
-        assertTrue(this.uut.isReset());
+        assertProduces("mkproyitaaarrt", 5, "mariokartparty");
     }
 
     @Test
     public void testAlgorithm6() {
-        DebugQueue queue = this.core.getRegisteredAlgorithm(BurrowsWheelerTransformationCore.Algorithms.values()[0]);
-        this.uut.launch("ntneoidn", 4);
-        while (!this.reachedEnd) {
-            queue.stepForward();
-        }
-        assertEquals("nintendo", this.uut.getResult());
-        while (!this.reachedBegin) {
-            queue.stepBack();
-        }
-        assertTrue(this.uut.isReset());
+        assertProduces("ntneoidn", 4, "nintendo");
     }
 
     @Test
     public void testAlgorithm7() {
-        DebugQueue queue = this.core.getRegisteredAlgorithm(BurrowsWheelerTransformationCore.Algorithms.values()[0]);
-        this.uut.launch("drrbeeee", 4);
-        while (!this.reachedEnd) {
-            queue.stepForward();
-        }
-        assertEquals("erdbeere", this.uut.getResult());
-        while (!this.reachedBegin) {
-            queue.stepBack();
-        }
-        assertTrue(this.uut.isReset());
+        assertProduces("drrbeeee", 4, "erdbeere");
     }
 
 }
