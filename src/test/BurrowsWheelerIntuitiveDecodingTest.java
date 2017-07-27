@@ -103,4 +103,19 @@ public class BurrowsWheelerIntuitiveDecodingTest {
         assertProduces("drrbeeee", 4, "erdbeere");
     }
 
+    @Test
+    public void testAlgorithm8() {
+        assertProduces("lgrgealare", 6, "lagerregal");
+    }
+
+    @Test
+    public void testAlgorithm9() {
+        assertProduces("sirgauteeee", 8, "saeugetiere");
+    }
+
+    @Test
+    public void testAlgorithm10() {
+        assertProduces("yyyrrrbbbeeeccc", 3, "cybercybercyber");
+    }
+
 }

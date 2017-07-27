@@ -110,4 +110,19 @@ public class BurrowsWheelerStandardEncodingTest {
         assertProduces("erdbeere", "drrbeeee", 4);
     }
 
+    @Test
+    public void testAlgorithm8() {
+        assertProduces("lagerregal", "lgrgealare", 6);
+    }
+
+    @Test
+    public void testAlgorithm9() {
+        assertProduces("saeugetiere", "sirgauteeee", 8);
+    }
+
+    @Test
+    public void testAlgorithm10() {
+        assertProduces("cybercybercyber", "yyyrrrbbbeeeccc", 3);
+    }
+
 }
