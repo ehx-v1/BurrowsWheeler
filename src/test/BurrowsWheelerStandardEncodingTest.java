@@ -106,4 +106,64 @@ public class BurrowsWheelerStandardEncodingTest {
         assertTrue(this.uut.isReset());
     }
 
+    @Test
+    public void testAlgorithm4() {
+        DebugQueue queue = this.core.getRegisteredAlgorithm(BurrowsWheelerTransformationCore.Algorithms.values()[0]);
+        this.uut.launch("sudoku");
+        while (!this.reachedEnd) {
+            queue.stepForward();
+        }
+        assertEquals("uodusk", this.uut.getResult());
+        assertEquals(3, this.uut.getIndexResult());
+        while (!this.reachedBegin) {
+            queue.stepBack();
+        }
+        assertTrue(this.uut.isReset());
+    }
+
+    @Test
+    public void testAlgorithm5() {
+        DebugQueue queue = this.core.getRegisteredAlgorithm(BurrowsWheelerTransformationCore.Algorithms.values()[0]);
+        this.uut.launch("mariokartparty");
+        while (!this.reachedEnd) {
+            queue.stepForward();
+        }
+        assertEquals("mkproyitaaarrt", this.uut.getResult());
+        assertEquals(5, this.uut.getIndexResult());
+        while (!this.reachedBegin) {
+            queue.stepBack();
+        }
+        assertTrue(this.uut.isReset());
+    }
+
+    @Test
+    public void testAlgorithm6() {
+        DebugQueue queue = this.core.getRegisteredAlgorithm(BurrowsWheelerTransformationCore.Algorithms.values()[0]);
+        this.uut.launch("nintendo");
+        while (!this.reachedEnd) {
+            queue.stepForward();
+        }
+        assertEquals("ntneoidn", this.uut.getResult());
+        assertEquals(4, this.uut.getIndexResult());
+        while (!this.reachedBegin) {
+            queue.stepBack();
+        }
+        assertTrue(this.uut.isReset());
+    }
+
+    @Test
+    public void testAlgorithm7() {
+        DebugQueue queue = this.core.getRegisteredAlgorithm(BurrowsWheelerTransformationCore.Algorithms.values()[0]);
+        this.uut.launch("erdbeere");
+        while (!this.reachedEnd) {
+            queue.stepForward();
+        }
+        assertEquals("drrbeeee", this.uut.getResult());
+        assertEquals(4, this.uut.getIndexResult());
+        while (!this.reachedBegin) {
+            queue.stepBack();
+        }
+        assertTrue(this.uut.isReset());
+    }
+
 }

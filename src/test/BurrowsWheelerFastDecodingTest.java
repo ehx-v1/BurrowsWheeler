@@ -94,4 +94,60 @@ public class BurrowsWheelerFastDecodingTest {
         assertTrue(this.uut.isReset());
     }
 
+    @Test
+    public void testAlgorithm4() {
+        DebugQueue queue = this.core.getRegisteredAlgorithm(BurrowsWheelerTransformationCore.Algorithms.values()[0]);
+        this.uut.launch("uodusk", 3);
+        while (!this.reachedEnd) {
+            queue.stepForward();
+        }
+        assertEquals("sudoku", this.uut.getResult());
+        while (!this.reachedBegin) {
+            queue.stepBack();
+        }
+        assertTrue(this.uut.isReset());
+    }
+
+    @Test
+    public void testAlgorithm5() {
+        DebugQueue queue = this.core.getRegisteredAlgorithm(BurrowsWheelerTransformationCore.Algorithms.values()[0]);
+        this.uut.launch("mkproyitaaarrt", 5);
+        while (!this.reachedEnd) {
+            queue.stepForward();
+        }
+        assertEquals("mariokartparty", this.uut.getResult());
+        while (!this.reachedBegin) {
+            queue.stepBack();
+        }
+        assertTrue(this.uut.isReset());
+    }
+
+    @Test
+    public void testAlgorithm6() {
+        DebugQueue queue = this.core.getRegisteredAlgorithm(BurrowsWheelerTransformationCore.Algorithms.values()[0]);
+        this.uut.launch("ntneoidn", 4);
+        while (!this.reachedEnd) {
+            queue.stepForward();
+        }
+        assertEquals("nintendo", this.uut.getResult());
+        while (!this.reachedBegin) {
+            queue.stepBack();
+        }
+        assertTrue(this.uut.isReset());
+    }
+
+    @Test
+    public void testAlgorithm7() {
+        DebugQueue queue = this.core.getRegisteredAlgorithm(BurrowsWheelerTransformationCore.Algorithms.values()[0]);
+        this.uut.launch("drrbeeee", 4);
+        while (!this.reachedEnd) {
+            queue.stepForward();
+        }
+        assertEquals("erdbeere", this.uut.getResult());
+        while (!this.reachedBegin) {
+            queue.stepBack();
+        }
+        assertTrue(this.uut.isReset());
+    }
+
 }
