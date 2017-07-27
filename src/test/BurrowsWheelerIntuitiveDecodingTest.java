@@ -1,6 +1,6 @@
 package test;
 
-import core.BurrowsWheelerStandardEncoding;
+import core.BurrowsWheelerIntuitiveDecoding;
 import core.BurrowsWheelerTransformationCore;
 import runtimeframework.DebugQueue;
 
@@ -11,39 +11,33 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
- * Created by root on 22.07.2017.
+ * Created by root on 27.07.2017.
  */
-public class BurrowsWheelerStandardEncodingTest {
-    private class ValueFetchableTestUnit extends BurrowsWheelerStandardEncoding {
+public class BurrowsWheelerIntuitiveDecodingTest {
+
+    private class ValueFetchableTestUnit extends BurrowsWheelerIntuitiveDecoding {
+        private int index;
 
         public ValueFetchableTestUnit(BurrowsWheelerTransformationCore core) {
-            super(core, () -> BurrowsWheelerStandardEncodingTest.this.reachedBegin = true, () -> BurrowsWheelerStandardEncodingTest.this.reachedEnd = true);
+            super(core, () -> BurrowsWheelerIntuitiveDecodingTest.this.reachedBegin = true, () -> BurrowsWheelerIntuitiveDecodingTest.this.reachedEnd = true);
         }
 
-        @Override
-        public void launch (String input) {
+        public void launch(String input, int index) {
+            this.index = index;
             super.launch(input);
         }
 
-        // accumulating last characters
         public String getResult() {
-            String last = "";
-            for (BurrowsWheelerTransformationCore.BurrowsWheelerTableLine line : this.inputTable) {
-                last += line.toString().charAt(line.length()-1);
-            }
-            return last;
-        }
-
-        // same method that is/will be used in the viewer
-        public int getIndexResult() {
-            for (int i = 0; i < this.inputTable.length; i++) {
-                if (this.inputTable[i].toString().equals(this.input)) return i;
-            }
-            return -1;
+            return this.inputTable[this.index].toString();
         }
 
         public boolean isAlmostEmpty() {
-            return this.filledLines <= 1;
+            for (BurrowsWheelerTransformationCore.BurrowsWheelerTableLine line : this.inputTable) {
+                for (char c : line.toString().substring(0, line.length() - 2).toCharArray()) { // all characters except last must be \0
+                    if (c != '\0') return false;
+                }
+            }
+            return true;
         }
 
     }
@@ -64,12 +58,11 @@ public class BurrowsWheelerStandardEncodingTest {
     @Test
     public void testAlgorithm1() {
         DebugQueue queue = this.core.getRegisteredAlgorithm(BurrowsWheelerTransformationCore.Algorithms.BW_PERMUTATIONS_ENCODE);
-        this.uut.launch("ananas");
+        this.uut.launch("snnaaa", 0);
         while (!this.reachedEnd) {
             queue.stepForward();
         }
-        assertEquals("snnaaa", this.uut.getResult());
-        assertEquals(0, this.uut.getIndexResult());
+        assertEquals("ananas", this.uut.getResult());
         while (!this.reachedBegin) {
             queue.stepBack();
         }
