@@ -1,6 +1,6 @@
 package test;
 
-import core.BurrowsWheelerIntuitiveDecoding;
+import core.BurrowsWheelerFastDecoding;
 import core.BurrowsWheelerTransformationCore;
 import runtimeframework.DebugQueue;
 
@@ -13,29 +13,26 @@ import static org.junit.Assert.assertTrue;
 /**
  * Created by root on 27.07.2017.
  */
-public class BurrowsWheelerIntuitiveDecodingTest {
+public class BurrowsWheelerFastDecodingTest {
 
-    private class ValueFetchableTestUnit extends BurrowsWheelerIntuitiveDecoding {
+    private class ValueFetchableTestUnit extends BurrowsWheelerFastDecoding {
         private int index;
 
         public ValueFetchableTestUnit(BurrowsWheelerTransformationCore core) {
-            super(core, () -> BurrowsWheelerIntuitiveDecodingTest.this.reachedBegin = true, () -> BurrowsWheelerIntuitiveDecodingTest.this.reachedEnd = true);
+            super(core, () -> BurrowsWheelerFastDecodingTest.this.reachedBegin = true, () -> BurrowsWheelerFastDecodingTest.this.reachedEnd = true);
         }
 
         public void launch(String input, int index) {
-            this.index = index;
-            super.launch(input);
+            super.launch(input, index);
         }
 
         public String getResult() {
-            return this.inputTable[this.index].toString();
+            return this.result;
         }
 
         public boolean isReset() {
-            for (BurrowsWheelerTransformationCore.BurrowsWheelerTableLine line : this.inputTable) {
-                for (char c : line.toString().substring(0, line.length() - 2).toCharArray()) { // all characters except last must be \0
-                    if (c != '\0') return false;
-                }
+            for (int i = 0; i < this.characters.size(); i++) {
+                if (!this.characters.get(i).hasIndex(i)) return false;
             }
             return true;
         }

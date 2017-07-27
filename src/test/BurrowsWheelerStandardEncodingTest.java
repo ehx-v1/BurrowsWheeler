@@ -42,7 +42,7 @@ public class BurrowsWheelerStandardEncodingTest {
             return -1;
         }
 
-        public boolean isAlmostEmpty() {
+        public boolean isReset() {
             return this.filledLines <= 1;
         }
 
@@ -63,7 +63,7 @@ public class BurrowsWheelerStandardEncodingTest {
 
     @Test
     public void testAlgorithm1() {
-        DebugQueue queue = this.core.getRegisteredAlgorithm(BurrowsWheelerTransformationCore.Algorithms.BW_PERMUTATIONS_ENCODE);
+        DebugQueue queue = this.core.getRegisteredAlgorithm(BurrowsWheelerTransformationCore.Algorithms.values()[0]);
         this.uut.launch("ananas");
         while (!this.reachedEnd) {
             queue.stepForward();
@@ -73,12 +73,12 @@ public class BurrowsWheelerStandardEncodingTest {
         while (!this.reachedBegin) {
             queue.stepBack();
         }
-        assertTrue(this.uut.isAlmostEmpty());
+        assertTrue(this.uut.isReset());
     }
 
     @Test
     public void testAlgorithm2() {
-        DebugQueue queue = this.core.getRegisteredAlgorithm(BurrowsWheelerTransformationCore.Algorithms.BW_PERMUTATIONS_ENCODE);
+        DebugQueue queue = this.core.getRegisteredAlgorithm(BurrowsWheelerTransformationCore.Algorithms.values()[0]);
         this.uut.launch("backpapier");
         while (!this.reachedEnd) {
             queue.stepForward();
@@ -88,12 +88,12 @@ public class BurrowsWheelerStandardEncodingTest {
         while (!this.reachedBegin) {
             queue.stepBack();
         }
-        assertTrue(this.uut.isAlmostEmpty());
+        assertTrue(this.uut.isReset());
     }
 
     @Test
     public void testAlgorithm3() {
-        DebugQueue queue = this.core.getRegisteredAlgorithm(BurrowsWheelerTransformationCore.Algorithms.BW_PERMUTATIONS_ENCODE);
+        DebugQueue queue = this.core.getRegisteredAlgorithm(BurrowsWheelerTransformationCore.Algorithms.values()[0]);
         this.uut.launch("mississippi");
         while (!this.reachedEnd) {
             queue.stepForward();
@@ -103,7 +103,7 @@ public class BurrowsWheelerStandardEncodingTest {
         while (!this.reachedBegin) {
             queue.stepBack();
         }
-        assertTrue(this.uut.isAlmostEmpty());
+        assertTrue(this.uut.isReset());
     }
 
 }
