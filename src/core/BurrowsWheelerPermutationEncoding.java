@@ -26,7 +26,7 @@ public class BurrowsWheelerPermutationEncoding extends BurrowsWheelerStandardEnc
         super(core, onPreBegin, onPostEnd);
     }
 
-    private void launch(String input, BurrowsWheelerTransformationCore.Permutation permutation) {
+    protected void launch(String input, BurrowsWheelerTransformationCore.Permutation permutation) {
         super.launch(input);
         this.permutation = permutation;
         this.permutated = new boolean[this.inputTable.length];
