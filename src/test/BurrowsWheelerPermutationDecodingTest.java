@@ -120,6 +120,148 @@ public class BurrowsWheelerPermutationDecodingTest {
         assertProduces("yyyrrrbbbeeeccc", 3, "cybercybercyber");
     }
 
-    // TODO test permutations
+    @Test
+    public void testAlgorithm11() {
+        assertProduces("snsaaa", 0, original -> {
+            switch (original) {
+                case 'n':
+                    return 's';
+                case 's':
+                    return 'n';
+                default:
+                    return original;
+            }
+        }, "ananas");
+    }
+
+    @Test
+    public void testAlgorithm12() {
+        assertProduces("cbrkaaippe", 2, original -> {
+            switch (original) {
+                case 'c':
+                    return 'p';
+                case 'p':
+                    return 'c';
+                default:
+                    return original;
+            }
+        }, "backpapier");
+    }
+
+    @Test
+    public void testAlgorithm13() {
+        assertProduces("ssmpipppiii", 4, original -> {
+            switch (original) {
+                case 'p':
+                    return 's';
+                case 's':
+                    return 'p';
+                default:
+                    return original;
+            }
+        }, "mississippi");
+    }
+
+    @Test
+    public void testAlgorithm14() {
+        assertProduces("uusdku", 5, original -> {
+            switch (original) {
+                case 'o':
+                    return 'u';
+                case 'u':
+                    return 'o';
+                default:
+                    return original;
+            }
+        }, "sudoku");
+    }
+
+    @Test
+    public void testAlgorithm15() {
+        assertProduces("mkprrroyitaaat", 7, original -> {
+            switch (original) {
+                case 'i':
+                    return 't';
+                case 't':
+                    return 'i';
+                default:
+                    return original;
+            }
+        }, "mariokartparty");
+    }
+
+    @Test
+    public void testAlgorithm16() {
+        assertProduces("nntoeiin", 3, original -> {
+            switch (original) {
+                case 'd':
+                    return 'i';
+                case 'i':
+                    return 'd';
+                default:
+                    return original;
+            }
+        }, "nintendo");
+    }
+
+    @Test
+    public void testAlgorithm17() {
+        assertProduces("erbrdded", 5, original -> {
+            switch (original) {
+                case 'd':
+                    return 'e';
+                case 'e':
+                    return 'd';
+                default:
+                    return original;
+            }
+        }, "erdbeere");
+    }
+
+    @Test
+    public void testAlgorithm18() {
+        assertProduces("rlggeelara", 6, original -> {
+            switch (original) {
+                case 'a':
+                    return 'e';
+                case 'e':
+                    return 'a';
+                default:
+                    return original;
+            }
+        }, "lagerregal");
+    }
+
+    @Test
+    public void testAlgorithm19() {
+        assertProduces("rgrgeallae", 6, original -> {
+            switch (original) {
+                case 'l':
+                    return 'r';
+                case 'r':
+                    return 'l';
+                default:
+                    return original;
+            }
+        }, "lagerregal");
+    }
+
+    @Test
+    public void testAlgorithm20() {
+        assertProduces("llggeellaa", 6, original -> {
+            switch (original) {
+                case 'a':
+                    return 'e';
+                case 'e':
+                    return 'a';
+                case 'l':
+                    return 'r';
+                case 'r':
+                    return 'l';
+                default:
+                    return original;
+            }
+        }, "lagerregal");
+    }
 
 }

@@ -35,9 +35,9 @@ public class BurrowsWheelerPermutationEncodingTest {
         }
 
         // same method that is/will be used in the viewer
-        public int getIndexResult() {
+        public int getIndexResult(BurrowsWheelerTransformationCore.Permutation permutation) {
             for (int i = 0; i < this.inputTable.length; i++) {
-                if (this.inputTable[i].toString().equals(this.input)) return i;
+                if (this.inputTable[i].isConvertible(this.input, permutation)) return i;
             }
             return -1;
         }
@@ -60,7 +60,7 @@ public class BurrowsWheelerPermutationEncodingTest {
             queue.stepForward();
         }
         assertEquals(expectedResult, this.uut.getResult());
-        assertEquals(expectedIndexResult, this.uut.getIndexResult());
+        assertEquals(expectedIndexResult, this.uut.getIndexResult(permutation));
         while (!this.reachedBegin) {
             queue.stepBack();
         }
@@ -129,6 +129,148 @@ public class BurrowsWheelerPermutationEncodingTest {
         assertProduces("cybercybercyber", "yyyrrrbbbeeeccc", 3);
     }
 
-    // TODO test permutations
+    @Test
+    public void testAlgorithm11() {
+        assertProduces("ananas", original -> {
+            switch (original) {
+                case 'n':
+                    return 's';
+                case 's':
+                    return 'n';
+                default:
+                    return original;
+            }
+        }, "snsaaa", 0);
+    }
+
+    @Test
+    public void testAlgorithm12() {
+        assertProduces("backpapier", original -> {
+            switch (original) {
+                case 'c':
+                    return 'p';
+                case 'p':
+                    return 'c';
+                default:
+                    return original;
+            }
+        }, "cbrkaaippe", 2);
+    }
+
+    @Test
+    public void testAlgorithm13() {
+        assertProduces("mississippi", original -> {
+            switch (original) {
+                case 'p':
+                    return 's';
+                case 's':
+                    return 'p';
+                default:
+                    return original;
+            }
+        }, "ssmpipppiii", 4);
+    }
+
+    @Test
+    public void testAlgorithm14() {
+        assertProduces("sudoku", original -> {
+            switch (original) {
+                case 'o':
+                    return 'u';
+                case 'u':
+                    return 'o';
+                default:
+                    return original;
+            }
+        }, "uusdku", 5);
+    }
+
+    @Test
+    public void testAlgorithm15() {
+        assertProduces("mariokartparty", original -> {
+            switch (original) {
+                case 'i':
+                    return 't';
+                case 't':
+                    return 'i';
+                default:
+                    return original;
+            }
+        }, "mkprrroyitaaat", 7);
+    }
+
+    @Test
+    public void testAlgorithm16() {
+        assertProduces("nintendo", original -> {
+            switch (original) {
+                case 'd':
+                    return 'i';
+                case 'i':
+                    return 'd';
+                default:
+                    return original;
+            }
+        }, "nntoeiin", 3);
+    }
+
+    @Test
+    public void testAlgorithm17() {
+        assertProduces("erdbeere", original -> {
+            switch (original) {
+                case 'd':
+                    return 'e';
+                case 'e':
+                    return 'd';
+                default:
+                    return original;
+            }
+        }, "erbrdded", 5);
+    }
+
+    @Test
+    public void testAlgorithm18() {
+        assertProduces("lagerregal", original -> {
+            switch (original) {
+                case 'a':
+                    return 'e';
+                case 'e':
+                    return 'a';
+                default:
+                    return original;
+            }
+        }, "rlggeelara", 6);
+    }
+
+    @Test
+    public void testAlgorithm19() {
+        assertProduces("lagerregal", original -> {
+            switch (original) {
+                case 'l':
+                    return 'r';
+                case 'r':
+                    return 'l';
+                default:
+                    return original;
+            }
+        }, "rgrgeallae", 6);
+    }
+
+    @Test
+    public void testAlgorithm20() {
+        assertProduces("lagerregal", original -> {
+            switch (original) {
+                case 'a':
+                    return 'e';
+                case 'e':
+                    return 'a';
+                case 'l':
+                    return 'r';
+                case 'r':
+                    return 'l';
+                default:
+                    return original;
+            }
+        }, "llggeellaa", 6);
+    }
 
 }
