@@ -22,7 +22,7 @@ import java.util.List;
  */
 public class BurrowsWheelerFastDecoding implements BurrowsWheelerTransformationCore.AlgorithmImplementationStub {
 
-    private static class IndexedCharacter implements Comparable<IndexedCharacter> {
+    protected static class IndexedCharacter implements Comparable<IndexedCharacter> {
         private char content;
         private int index;
 
@@ -40,9 +40,13 @@ public class BurrowsWheelerFastDecoding implements BurrowsWheelerTransformationC
             return Comparator.comparingInt(character -> character.index);
         }
 
+        public boolean hasIndex (int index) {
+            return this.index == index;
+        }
+
     }
 
-    private List<IndexedCharacter> characters;
+    protected List<IndexedCharacter> characters;
     private int index;
     protected String result; // will be used in the visualization
 

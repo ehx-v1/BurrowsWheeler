@@ -1,9 +1,11 @@
 package test;
+
 import core.BurrowsWheelerStandardEncoding;
 import core.BurrowsWheelerTransformationCore;
+import runtimeframework.DebugQueue;
+
 import org.junit.Before;
 import org.junit.Test;
-import runtimeframework.DebugQueue;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -40,7 +42,7 @@ public class BurrowsWheelerStandardEncodingTest {
             return -1;
         }
 
-        public boolean isAlmostEmpty() {
+        public boolean isReset() {
             return this.filledLines <= 1;
         }
 
@@ -50,6 +52,20 @@ public class BurrowsWheelerStandardEncodingTest {
     private ValueFetchableTestUnit uut;
     private boolean reachedBegin;
     private boolean reachedEnd;
+
+    private void assertProduces (String input, String expectedResult, int expectedIndexResult) {
+        DebugQueue queue = this.core.getRegisteredAlgorithm(BurrowsWheelerTransformationCore.Algorithms.values()[0]);
+        this.uut.launch(input);
+        while (!this.reachedEnd) {
+            queue.stepForward();
+        }
+        assertEquals(expectedResult, this.uut.getResult());
+        assertEquals(expectedIndexResult, this.uut.getIndexResult());
+        while (!this.reachedBegin) {
+            queue.stepBack();
+        }
+        assertTrue(this.uut.isReset());
+    }
 
     @Before
     public void resetCoreAndAlgorithm() {
@@ -61,17 +77,52 @@ public class BurrowsWheelerStandardEncodingTest {
 
     @Test
     public void testAlgorithm1() {
-        DebugQueue queue = this.core.getRegisteredAlgorithm(BurrowsWheelerTransformationCore.Algorithms.BW_PERMUTATIONS_ENCODE);
-        this.uut.launch("ananas");
-        while (!this.reachedEnd) {
-            queue.stepForward();
-        }
-        assertEquals("snnaaa", this.uut.getResult());
-        assertEquals(0, this.uut.getIndexResult());
-        while (!this.reachedBegin) {
-            queue.stepBack();
-        }
-        assertTrue(this.uut.isAlmostEmpty());
+        assertProduces("ananas", "snnaaa", 0);
+    }
+
+    @Test
+    public void testAlgorithm2() {
+        assertProduces("backpapier", "bpraipckae", 2);
+    }
+
+    @Test
+    public void testAlgorithm3() {
+        assertProduces("mississippi", "pssmipissii", 4);
+    }
+
+    @Test
+    public void testAlgorithm4() {
+        assertProduces("sudoku", "uodusk", 3);
+    }
+
+    @Test
+    public void testAlgorithm5() {
+        assertProduces("mariokartparty", "mkproyitaaarrt", 5);
+    }
+
+    @Test
+    public void testAlgorithm6() {
+        assertProduces("nintendo", "ntneoidn", 4);
+    }
+
+    @Test
+    public void testAlgorithm7() {
+        assertProduces("erdbeere", "drrbeeee", 4);
+    }
+
+    @Test
+    public void testAlgorithm8() {
+        assertProduces("lagerregal", "lgrgealare", 6);
+    }
+
+    @Test
+    public void testAlgorithm9() {
+        assertProduces("saeugetiere", "sirgauteeee", 8);
+    }
+
+    @Test
+    public void testAlgorithm10() {
+        assertProduces("cybercybercyber", "yyyrrrbbbeeeccc", 3);
     }
 
 }

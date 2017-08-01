@@ -32,7 +32,7 @@ public class BurrowsWheelerPermutationDecoding extends BurrowsWheelerIntuitiveDe
     }
 
     private BurrowsWheelerTransformationCore.Permutation permutation;
-    private int index;
+    protected int index;
 
     public BurrowsWheelerPermutationDecoding(BurrowsWheelerTransformationCore core, Runnable onPreBegin, Runnable onPostEnd) {
         super(core, onPreBegin, onPostEnd);
@@ -56,12 +56,6 @@ public class BurrowsWheelerPermutationDecoding extends BurrowsWheelerIntuitiveDe
             while (!line.isConvertible(textOnIndex, this.permutation)) {
                 line.rotateLeft();
             }
-        }
-        // find smallest unique prefix
-        String prefix = "";
-        for (char c : textOnIndex.toCharArray()) {
-            prefix += c;
-            if (!textOnIndex.substring(1).contains(prefix)) break; // smallest unique substring found in this case
         }
         // until a line is different on from the prefix, compare lines
         for (BurrowsWheelerTransformationCore.BurrowsWheelerTableLine line : lines) {
