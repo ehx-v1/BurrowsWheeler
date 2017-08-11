@@ -19,10 +19,11 @@ public class DebugQueue extends LinkedList<DebugStep> {
 
     /**
      * To use the Debug Framework, you first create a @code{DebugQueue} using this constructor, and fill it with @link{DebugStep}s.\n
-     * You CANNOT run a DebugQueue created with this constructor. To have it ready to run, pass it to the other constructor.
+     * You CANNOT run a @code{DebugQueue} created with this constructor. To have it ready to run, pass it to the other constructor.
      * @see #DebugQueue(DebugQueue, Runnable, Runnable)
      */
     public DebugQueue() {
+        super();
         this.begin = () -> {
             throw new RuntimeException("Did not initialize queue cleanly");
         };
@@ -41,6 +42,7 @@ public class DebugQueue extends LinkedList<DebugStep> {
      * @see #DebugQueue()
      */
     public DebugQueue(DebugQueue content, Runnable doWhenPreBegin, Runnable doWhenAfterEnd) {
+        super();
         this.addAll(content);
         this.begin = doWhenPreBegin;
         this.end = doWhenAfterEnd;
