@@ -17,8 +17,8 @@ public class BurrowsWheelerPermutationDecodingTest {
 
     private class ValueFetchableTestUnit extends BurrowsWheelerPermutationDecoding {
 
-        public ValueFetchableTestUnit(BurrowsWheelerTransformationCore core) {
-            super(core, () -> BurrowsWheelerPermutationDecodingTest.this.reachedBegin = true, () -> BurrowsWheelerPermutationDecodingTest.this.reachedEnd = true);
+        public ValueFetchableTestUnit(BurrowsWheelerTransformationCore core, Runnable preBegin, Runnable postEnd) {
+            super(core, preBegin, postEnd);
         }
 
         public void launch (String input, int index, BurrowsWheelerTransformationCore.Permutation permutation) {
@@ -65,7 +65,7 @@ public class BurrowsWheelerPermutationDecodingTest {
     @Before
     public void resetCoreAndAlgorithm() {
         this.core = new BurrowsWheelerTransformationCore(20);
-        this.uut = new ValueFetchableTestUnit(this.core);
+        this.uut = new ValueFetchableTestUnit(this.core, () -> this.reachedBegin = true, () -> this.reachedEnd = true);
         this.reachedBegin = false;
         this.reachedEnd = false;
     }

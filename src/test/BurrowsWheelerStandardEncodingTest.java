@@ -16,8 +16,8 @@ import static org.junit.Assert.assertTrue;
 public class BurrowsWheelerStandardEncodingTest {
     private class ValueFetchableTestUnit extends BurrowsWheelerStandardEncoding {
 
-        public ValueFetchableTestUnit(BurrowsWheelerTransformationCore core) {
-            super(core, () -> BurrowsWheelerStandardEncodingTest.this.reachedBegin = true, () -> BurrowsWheelerStandardEncodingTest.this.reachedEnd = true);
+        public ValueFetchableTestUnit(BurrowsWheelerTransformationCore core, Runnable preBegin, Runnable postEnd) {
+            super(core, preBegin, postEnd);
         }
 
         @Override
@@ -70,7 +70,7 @@ public class BurrowsWheelerStandardEncodingTest {
     @Before
     public void resetCoreAndAlgorithm() {
         this.core = new BurrowsWheelerTransformationCore(20);
-        this.uut = new ValueFetchableTestUnit(this.core);
+        this.uut = new ValueFetchableTestUnit(this.core, () -> this.reachedBegin = true, () -> this.reachedEnd = true);
         this.reachedBegin = false;
         this.reachedEnd = false;
     }

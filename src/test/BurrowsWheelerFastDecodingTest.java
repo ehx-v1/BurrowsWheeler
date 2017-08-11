@@ -18,8 +18,8 @@ public class BurrowsWheelerFastDecodingTest {
     private class ValueFetchableTestUnit extends BurrowsWheelerFastDecoding {
         private int index;
 
-        public ValueFetchableTestUnit(BurrowsWheelerTransformationCore core) {
-            super(core, () -> BurrowsWheelerFastDecodingTest.this.reachedBegin = true, () -> BurrowsWheelerFastDecodingTest.this.reachedEnd = true);
+        public ValueFetchableTestUnit(BurrowsWheelerTransformationCore core, Runnable preBegin, Runnable postEnd) {
+            super(new BurrowsWheelerTransformationCore(0), preBegin, postEnd);
         }
 
         public void launch(String input, int index) {
@@ -60,7 +60,7 @@ public class BurrowsWheelerFastDecodingTest {
     @Before
     public void resetCoreAndAlgorithm() {
         this.core = new BurrowsWheelerTransformationCore(20);
-        this.uut = new ValueFetchableTestUnit(this.core);
+        this.uut = new ValueFetchableTestUnit(this.core, () -> this.reachedBegin = true, () -> this.reachedEnd = true);
         this.reachedBegin = false;
         this.reachedEnd = false;
     }
