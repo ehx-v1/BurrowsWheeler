@@ -60,7 +60,7 @@ public class BurrowsWheelerStandardEncoding implements BurrowsWheelerTransformat
     }
 
     protected void sort() {
-        Arrays.sort(this.inputTable, BurrowsWheelerTransformationCore.BurrowsWheelerTableLine.sortingComparator());
+        Arrays.sort(this.inputTable, BurrowsWheelerTransformationCore.BurrowsWheelerTableLine.sortingAheadComparator());
     }
 
     protected void revertSort() {

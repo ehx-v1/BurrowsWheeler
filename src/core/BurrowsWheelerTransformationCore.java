@@ -130,6 +130,10 @@ public class BurrowsWheelerTransformationCore {
             return (o1, o2) -> Character.compare(o1.content[0], o2.content[0]);
         }
 
+        public static Comparator<BurrowsWheelerTableLine> sortingAheadComparator() {
+            return Comparator.comparing(BurrowsWheelerTableLine::toString);
+        }
+
         public static Comparator<BurrowsWheelerTableLine> sortingRevertComparator() {
             return (o1, o2) -> Character.compare(o1.content[1], o2.content[1]);
         }
