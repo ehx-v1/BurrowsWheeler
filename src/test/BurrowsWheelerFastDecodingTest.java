@@ -31,30 +31,60 @@ public class BurrowsWheelerFastDecodingTest {
         }
 
         public boolean isReset() {
-            for (int i = 0; i < this.characters.size(); i++) {
-                if (!this.characters.get(i).hasIndex(i)) return false;
+            for (IndexedCharacter character : this.characters) {
+                if (!character.hasIndex(-1)) return false;
             }
             return true;
         }
 
     }
 
+    private class ValueFetchableTestUnit2 extends ValueFetchableTestUnit {
+        private int index;
+
+        public ValueFetchableTestUnit2(BurrowsWheelerTransformationCore core, Runnable preBegin, Runnable postEnd) {
+            super(core, preBegin, postEnd);
+        }
+
+        @Override
+        public boolean isReset() {
+            for (int i = 0; i < this.characters.size(); i++) {
+                if (!this.characters.get(i).hasIndex(i)) return false;
+            }
+            return true;
+        }
+
+        @Override
+        protected void revertMakeIndexes() {
+            // skip reverting
+        }
+
+    }
+
     private BurrowsWheelerTransformationCore core;
     private ValueFetchableTestUnit uut;
+    private ValueFetchableTestUnit2 uut2;
     private boolean reachedBegin;
     private boolean reachedEnd;
 
+    private ValueFetchableTestUnit getTestUnit (boolean first) {
+        if (first) return uut;
+        return uut2;
+    }
+
     private void assertProduces (String input, int index, String expectedOutput) {
-        DebugQueue queue = this.core.getRegisteredAlgorithm(BurrowsWheelerTransformationCore.Algorithms.values()[0]);
-        this.uut.launch(input, index);
-        while (!this.reachedEnd) {
-            queue.stepForward();
+        for (int i = 0; i < 2; i++) {
+            DebugQueue queue = this.core.getRegisteredAlgorithm(BurrowsWheelerTransformationCore.Algorithms.values()[i]);
+            this.getTestUnit(i == 0).launch(input, index);
+            while (!this.reachedEnd) {
+                queue.stepForward();
+            }
+            assertEquals(expectedOutput, this.uut.getResult());
+            while (!this.reachedBegin) {
+                queue.stepBack();
+            }
+            assertTrue(this.uut.isReset());
         }
-        assertEquals(expectedOutput, this.uut.getResult());
-        while (!this.reachedBegin) {
-            queue.stepBack();
-        }
-        assertTrue(this.uut.isReset());
     }
 
     @Before
@@ -72,7 +102,7 @@ public class BurrowsWheelerFastDecodingTest {
 
     @Test
     public void testAlgorithm2() {
-        assertProduces("bpraipckae", 4, "backpapier");
+        assertProduces("bpraipckae", 2, "backpapier");
     }
 
     @Test

@@ -69,7 +69,7 @@ public class BurrowsWheelerFastDecoding implements BurrowsWheelerTransformationC
         }
     }
 
-    private void revertMakeIndexes() {
+    protected void revertMakeIndexes() {
         for (IndexedCharacter character : this.characters) {
             character.index = -1;
         }
@@ -86,8 +86,8 @@ public class BurrowsWheelerFastDecoding implements BurrowsWheelerTransformationC
     private void chain() {
         int currentChar = this.index;
         do {
-            currentChar = this.characters.get(currentChar).index;
             this.result += this.characters.get(currentChar).content;
+            currentChar = this.characters.get(currentChar).index;
         } while (currentChar != this.index);
     }
 

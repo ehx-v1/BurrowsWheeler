@@ -75,7 +75,7 @@ public class BurrowsWheelerIntuitiveDecodingTest {
 
     @Test
     public void testAlgorithm2() {
-        assertProduces("bpraipckae", 4, "backpapier");
+        assertProduces("bpraipckae", 2, "backpapier");
     }
 
     @Test
