@@ -20,7 +20,7 @@ import java.util.Map;
  */
 public class BurrowsWheelerPermutationEncoding extends BurrowsWheelerStandardEncoding {
     private BurrowsWheelerTransformationCore.Permutation permutation;
-    private boolean[] permutated;
+    protected boolean[] permutated;
 
     public BurrowsWheelerPermutationEncoding(BurrowsWheelerTransformationCore core, Runnable onPreBegin, Runnable onPostEnd) {
         super(core, onPreBegin, onPostEnd);
@@ -73,6 +73,7 @@ public class BurrowsWheelerPermutationEncoding extends BurrowsWheelerStandardEnc
             private BurrowsWheelerTransformationCore.Permutation permutation;
             private Button permutationMenu = new Button();
             private GridPane table = new GridPane();
+            // TODO display fields for results
 
             {
                 this.launcher.setText("Launch");

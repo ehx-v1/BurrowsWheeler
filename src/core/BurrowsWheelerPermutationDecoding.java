@@ -38,7 +38,7 @@ public class BurrowsWheelerPermutationDecoding extends BurrowsWheelerIntuitiveDe
         super(core, onPreBegin, onPostEnd);
     }
 
-    protected void launch(String input, int decodingIndex, BurrowsWheelerTransformationCore.Permutation permutation) {
+    protected void launch(String input, int decodingIndex, BurrowsWheelerTransformationCore.Permutation permutation, boolean[] permutated) {
         super.launch(input);
         this.index = decodingIndex;
         this.permutation = permutation;
@@ -96,6 +96,7 @@ public class BurrowsWheelerPermutationDecoding extends BurrowsWheelerIntuitiveDe
         return new ViewerPane() {
             private TextField inputField = new TextField();
             private TextField indexField = new TextField();
+            private TextField permutationIndexField = new TextField();
             private Button launcher = new Button();
             private int readoutIndex = 0;
             private BurrowsWheelerTransformationCore.Permutation permutation;
@@ -122,7 +123,7 @@ public class BurrowsWheelerPermutationDecoding extends BurrowsWheelerIntuitiveDe
                                 this.table.getChildren().add(matrixField);
                             }
                         }
-                        BurrowsWheelerPermutationDecoding.this.launch(this.inputField.getText());
+                        BurrowsWheelerPermutationDecoding.this.launch(this.inputField.getText(), this.readoutIndex, this.permutation, this.parseFlags(Integer.parseInt(this.permutationIndexField.getText()), this.inputField.getText().length()));
                     } catch (NumberFormatException e) {
                         // TODO make popup that index input must be a number
                     }
@@ -150,6 +151,15 @@ public class BurrowsWheelerPermutationDecoding extends BurrowsWheelerIntuitiveDe
                 this.permutationMenu.setOnMouseClicked(event -> {
                     // TODO make popup menu that allows for setting the mapping for each lowercase character
                 });
+            }
+
+            private boolean[] parseFlags(int flagContainer, int sizeToParse) {
+                boolean[] result = new boolean[sizeToParse];
+                for (int i = 0; i < sizeToParse; i++) {
+                    result[i] = (flagContainer % 2 != 0);
+                    flagContainer /= 2;
+                }
+                return result;
             }
 
             @Override

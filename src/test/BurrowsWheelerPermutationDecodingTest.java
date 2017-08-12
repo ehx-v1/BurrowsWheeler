@@ -21,8 +21,8 @@ public class BurrowsWheelerPermutationDecodingTest {
             super(core, preBegin, postEnd);
         }
 
-        public void launch (String input, int index, BurrowsWheelerTransformationCore.Permutation permutation) {
-            super.launch(input, index, permutation);
+        public void launch (String input, int index, BurrowsWheelerTransformationCore.Permutation permutation, int permutated) {
+            super.launch(input, index, permutation, this.parseFlags(permutated, input.length()));
         }
 
         public String getResult() {
@@ -37,6 +37,14 @@ public class BurrowsWheelerPermutationDecodingTest {
             }
             return true;
         }
+        private boolean[] parseFlags(int flagContainer, int sizeToParse) {
+            boolean[] result = new boolean[sizeToParse];
+            for (int i = 0; i < sizeToParse; i++) {
+                result[i] = (flagContainer % 2 != 0);
+                flagContainer /= 2;
+            }
+            return result;
+        }
 
     }
 
@@ -46,12 +54,12 @@ public class BurrowsWheelerPermutationDecodingTest {
     private boolean reachedEnd;
 
     private void assertProduces (String input, int index, String expectedOutput) {
-        assertProduces(input, index, original -> original, expectedOutput);
+        assertProduces(input, index, 0, original -> original, expectedOutput);
     }
 
-    private void assertProduces (String input, int index, BurrowsWheelerTransformationCore.Permutation permutation, String expectedOutput) {
+    private void assertProduces (String input, int index, int permutated, BurrowsWheelerTransformationCore.Permutation permutation, String expectedOutput) {
         DebugQueue queue = this.core.getRegisteredAlgorithm(BurrowsWheelerTransformationCore.Algorithms.values()[0]);
-        this.uut.launch(input, index, permutation);
+        this.uut.launch(input, index, permutation, permutated);
         while (!this.reachedEnd) {
             queue.stepForward();
         }
@@ -122,7 +130,7 @@ public class BurrowsWheelerPermutationDecodingTest {
 
     @Test
     public void testAlgorithm11() {
-        assertProduces("snsaaa", 0, original -> {
+        assertProduces("snsaaa", 0, 36, original -> {
             switch (original) {
                 case 'n':
                     return 's';
@@ -136,7 +144,7 @@ public class BurrowsWheelerPermutationDecodingTest {
 
     @Test
     public void testAlgorithm12() {
-        assertProduces("cbrkaaippe", 2, original -> {
+        assertProduces("cbrkaaippe", 2, 281, original -> {
             switch (original) {
                 case 'c':
                     return 'p';
@@ -150,7 +158,7 @@ public class BurrowsWheelerPermutationDecodingTest {
 
     @Test
     public void testAlgorithm13() {
-        assertProduces("ssmpipppiii", 4, original -> {
+        assertProduces("ssmpipppiii", 4, 1757, original -> {
             switch (original) {
                 case 'p':
                     return 's';
@@ -164,7 +172,7 @@ public class BurrowsWheelerPermutationDecodingTest {
 
     @Test
     public void testAlgorithm14() {
-        assertProduces("uusdku", 5, original -> {
+        assertProduces("uusdku", 5, 54, original -> {
             switch (original) {
                 case 'o':
                     return 'u';
@@ -178,7 +186,7 @@ public class BurrowsWheelerPermutationDecodingTest {
 
     @Test
     public void testAlgorithm15() {
-        assertProduces("mkprrroyitaaat", 7, original -> {
+        assertProduces("mkprrroyitaaat", 7, 7030, original -> {
             switch (original) {
                 case 'i':
                     return 't';
@@ -192,7 +200,7 @@ public class BurrowsWheelerPermutationDecodingTest {
 
     @Test
     public void testAlgorithm16() {
-        assertProduces("nntoeiin", 3, original -> {
+        assertProduces("nntoeiin", 3, 73, original -> {
             switch (original) {
                 case 'd':
                     return 'i';
@@ -206,7 +214,7 @@ public class BurrowsWheelerPermutationDecodingTest {
 
     @Test
     public void testAlgorithm17() {
-        assertProduces("erbrdded", 5, original -> {
+        assertProduces("erbrdded", 5, 189, original -> {
             switch (original) {
                 case 'd':
                     return 'e';
@@ -220,7 +228,7 @@ public class BurrowsWheelerPermutationDecodingTest {
 
     @Test
     public void testAlgorithm18() {
-        assertProduces("rlggeelara", 6, original -> {
+        assertProduces("rlggeelara", 6, 809, original -> {
             switch (original) {
                 case 'a':
                     return 'e';
@@ -234,7 +242,7 @@ public class BurrowsWheelerPermutationDecodingTest {
 
     @Test
     public void testAlgorithm19() {
-        assertProduces("rgrgeallae", 6, original -> {
+        assertProduces("rgrgeallae", 6, 681, original -> {
             switch (original) {
                 case 'l':
                     return 'r';
@@ -248,7 +256,7 @@ public class BurrowsWheelerPermutationDecodingTest {
 
     @Test
     public void testAlgorithm20() {
-        assertProduces("llggeellaa", 6, original -> {
+        assertProduces("llggeellaa", 6, 406, original -> {
             switch (original) {
                 case 'a':
                     return 'e';

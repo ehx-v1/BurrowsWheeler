@@ -42,6 +42,17 @@ public class BurrowsWheelerPermutationEncodingTest {
             return -1;
         }
 
+        public int getPermutationIndexResult() {
+            int result = 0;
+            // TODO fill result with permutated indices
+            for (int i = 0; i < this.permutated.length; i++) {
+                if (this.permutated[i]) {
+                    result += (int)Math.pow(2, i);
+                }
+            }
+            return result;
+        }
+
         public boolean isReset() {
             return this.filledLines <= 1;
         }
@@ -53,7 +64,7 @@ public class BurrowsWheelerPermutationEncodingTest {
     private boolean reachedBegin;
     private boolean reachedEnd;
 
-    private void assertProduces (String input, BurrowsWheelerTransformationCore.Permutation permutation, String expectedResult, int expectedIndexResult) {
+    private void assertProduces (String input, BurrowsWheelerTransformationCore.Permutation permutation, String expectedResult, int expectedIndexResult, int expectedPermutationIndexResult) {
         DebugQueue queue = this.core.getRegisteredAlgorithm(BurrowsWheelerTransformationCore.Algorithms.values()[0]);
         this.uut.launch(input, permutation);
         while (!this.reachedEnd) {
@@ -61,6 +72,7 @@ public class BurrowsWheelerPermutationEncodingTest {
         }
         assertEquals(expectedResult, this.uut.getResult());
         assertEquals(expectedIndexResult, this.uut.getIndexResult(permutation));
+        assertEquals(expectedPermutationIndexResult, this.uut.getPermutationIndexResult());
         while (!this.reachedBegin) {
             queue.stepBack();
         }
@@ -68,7 +80,7 @@ public class BurrowsWheelerPermutationEncodingTest {
     }
 
     private void assertProduces (String input, String expectedResult, int expectedIndexResult) {
-        assertProduces(input, original -> original, expectedResult, expectedIndexResult);
+        assertProduces(input, original -> original, expectedResult, expectedIndexResult, 0);
     }
 
     @Before
@@ -140,7 +152,7 @@ public class BurrowsWheelerPermutationEncodingTest {
                 default:
                     return original;
             }
-        }, "snsaaa", 0);
+        }, "snsaaa", 0, 36);
     }
 
     @Test
@@ -154,7 +166,7 @@ public class BurrowsWheelerPermutationEncodingTest {
                 default:
                     return original;
             }
-        }, "cbrkaaippe", 2);
+        }, "cbrkaaippe", 2, 281);
     }
 
     @Test
@@ -168,7 +180,7 @@ public class BurrowsWheelerPermutationEncodingTest {
                 default:
                     return original;
             }
-        }, "ssmpipppiii", 4);
+        }, "ssmpipppiii", 4, 1757);
     }
 
     @Test
@@ -182,7 +194,7 @@ public class BurrowsWheelerPermutationEncodingTest {
                 default:
                     return original;
             }
-        }, "uusdku", 5);
+        }, "uusdko", 5, 54);
     }
 
     @Test
@@ -196,7 +208,7 @@ public class BurrowsWheelerPermutationEncodingTest {
                 default:
                     return original;
             }
-        }, "mkprrroyitaaat", 7);
+        }, "mkprrroyitaaat", 7, 7030);
     }
 
     @Test
@@ -210,7 +222,7 @@ public class BurrowsWheelerPermutationEncodingTest {
                 default:
                     return original;
             }
-        }, "nntoeiin", 3);
+        }, "nntoeiin", 3, 73);
     }
 
     @Test
@@ -224,7 +236,7 @@ public class BurrowsWheelerPermutationEncodingTest {
                 default:
                     return original;
             }
-        }, "erbrdded", 5);
+        }, "erbrdded", 5, 189);
     }
 
     @Test
@@ -238,7 +250,7 @@ public class BurrowsWheelerPermutationEncodingTest {
                 default:
                     return original;
             }
-        }, "rlggeelara", 6);
+        }, "rlggeelara", 6, 809);
     }
 
     @Test
@@ -252,7 +264,7 @@ public class BurrowsWheelerPermutationEncodingTest {
                 default:
                     return original;
             }
-        }, "rgrgeallae", 6);
+        }, "rgrgeallae", 6, 681);
     }
 
     @Test
@@ -270,7 +282,7 @@ public class BurrowsWheelerPermutationEncodingTest {
                 default:
                     return original;
             }
-        }, "llggeellaa", 6);
+        }, "llggeellaa", 6, 406);
     }
 
 }
