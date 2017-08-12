@@ -19,7 +19,7 @@ public class BurrowsWheelerFastDecodingTest {
         private int index;
 
         public ValueFetchableTestUnit(BurrowsWheelerTransformationCore core, Runnable preBegin, Runnable postEnd) {
-            super(new BurrowsWheelerTransformationCore(0), preBegin, postEnd);
+            super(core, preBegin, postEnd);
         }
 
         public void launch(String input, int index) {
