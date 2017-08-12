@@ -21,9 +21,11 @@ public class BurrowsWheelerIntuitiveDecoding implements BurrowsWheelerTransforma
     private String input;
     private int inputLimit;
     protected BurrowsWheelerTransformationCore.BurrowsWheelerTableLine[] inputTable;
+    protected int stepCount;
 
     public BurrowsWheelerIntuitiveDecoding(BurrowsWheelerTransformationCore core, Runnable onPreBegin, Runnable onPostEnd) {
         this.inputLimit = core.getMaxInputLength();
+        this.stepCount = 0;
         core.addImplementation(this, onPreBegin, onPostEnd);
     }
 
@@ -37,38 +39,46 @@ public class BurrowsWheelerIntuitiveDecoding implements BurrowsWheelerTransforma
     }
 
     private void append() {
-        // TODO make sure not to overshoot
-        for (int i = 0; i < this.input.length(); i++) {
-            this.inputTable[i].overwriteLast(this.input.charAt(i));
+        if (this.stepCount < this.input.length()) {
+            for (int i = 0; i < this.input.length(); i++) {
+                this.inputTable[i].overwriteLast(this.input.charAt(i));
+            }
         }
     }
 
     private void revertAppend() {
-        // TODO make sure not to overshoot
-        for (BurrowsWheelerTransformationCore.BurrowsWheelerTableLine inputLine : this.inputTable) {
-            inputLine.overwriteLast('\0');
+        if (this.stepCount < this.input.length()) {
+            for (BurrowsWheelerTransformationCore.BurrowsWheelerTableLine inputLine : this.inputTable) {
+                inputLine.overwriteLast('\0');
+            }
         }
     }
 
     private void rotate() {
-        // TODO make sure not to overshoot
-        for (BurrowsWheelerTransformationCore.BurrowsWheelerTableLine inputLine : this.inputTable) {
-            inputLine.rotateRight();
+        if (this.stepCount < this.input.length()) {
+            for (BurrowsWheelerTransformationCore.BurrowsWheelerTableLine inputLine : this.inputTable) {
+                inputLine.rotateRight();
+            }
         }
+        this.stepCount++;
     }
 
     private void revertRotate() {
-        // TODO make sure not to overshoot
-        for (BurrowsWheelerTransformationCore.BurrowsWheelerTableLine inputLine : this.inputTable) {
-            inputLine.rotateLeft();
+        --this.stepCount;
+        if (this.stepCount < this.input.length()) {
+            for (BurrowsWheelerTransformationCore.BurrowsWheelerTableLine inputLine : this.inputTable) {
+                inputLine.rotateLeft();
+            }
         }
     }
 
     private void sort() {
+        // should be immutable at iterations beyond the end
         Arrays.sort(inputTable, BurrowsWheelerTransformationCore.BurrowsWheelerTableLine.sortingComparator());
     }
 
     private void revertSort() {
+        // should be immutable at iterations beyond the end
         // either all or none of the table lines contain an actual second character to compare
         Arrays.sort(inputTable,
                 inputTable[0].isSecondSlotEmpty() ?
