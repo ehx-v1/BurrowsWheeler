@@ -45,7 +45,7 @@ public class BurrowsWheelerPermutationEncodingTest {
         public int getPermutationIndexResult() {
             int result = 0;
             for (int i = 0; i < this.permutated.length; i++) {
-                if (this.permutated[i]) {
+                if (this.permutated[this.inputTable[i].position]) {
                     result += (int)Math.pow(2, i);
                 }
             }

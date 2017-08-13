@@ -86,7 +86,7 @@ public class BurrowsWheelerTransformationCore {
 
     public static class BurrowsWheelerTableLine {
         private char[] content;
-        private int position;
+        public final int position;
 
         public BurrowsWheelerTableLine(int size, int position) {
             this.content = new char[size];
