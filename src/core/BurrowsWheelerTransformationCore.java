@@ -54,6 +54,7 @@ public class BurrowsWheelerTransformationCore {
                 output.overwriteLast(this.permutate(c));
                 output.rotateLeft();
             }
+            output.rotateRight();
             return output;
         }
 

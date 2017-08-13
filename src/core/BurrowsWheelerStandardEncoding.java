@@ -39,7 +39,7 @@ public class BurrowsWheelerStandardEncoding implements BurrowsWheelerTransformat
         }
         for (int i = 0; i < this.input.length(); i++) {
             this.inputTable[0].overwriteLast(this.input.charAt(i));
-            this.inputTable[0].rotateLeft();
+            this.inputTable[0].rotateLeft(); // rotates 1 too far but doesn't matter since all rotations needed
         }
         this.filledLines = 1;
     }

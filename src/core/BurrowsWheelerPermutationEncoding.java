@@ -56,12 +56,10 @@ public class BurrowsWheelerPermutationEncoding extends BurrowsWheelerStandardEnc
     @Override
     public DebugQueue getExecution() {
         DebugQueue queue = super.getExecution();
-        DebugStep lastStep = queue.removeLast();
-        queue.add(DebugStep.builder()
+        queue.add(queue.size() - 2, DebugStep.builder()
                 .setForward(BurrowsWheelerPermutationEncoding.this::permutate)
                 .setBackward(BurrowsWheelerPermutationEncoding.this::revertPermutate)
                 .build());
-        queue.add(lastStep);
         return queue;
     }
 
