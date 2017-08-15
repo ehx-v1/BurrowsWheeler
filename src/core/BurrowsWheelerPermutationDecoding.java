@@ -5,90 +5,58 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
-import runtimeframework.DebugQueue;
-import runtimeframework.DebugStep;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by root on 14.04.2017.
  */
 public class BurrowsWheelerPermutationDecoding extends BurrowsWheelerIntuitiveDecoding {
 
-    private class PermutationInput extends Parent {
-        private TextField mapping = new TextField();
-
-        public BurrowsWheelerTransformationCore.Permutation confirm() {
-            String text = mapping.getText();
-            if (text.length() != 26) return null;
-            String compare = "abcdefghijklmnopqrstuvwxyz";
-            return original -> text.charAt(compare.indexOf(original));
-        }
-    }
-
     private BurrowsWheelerTransformationCore.Permutation permutation;
     protected int index;
+    private boolean[] permutated;
 
     public BurrowsWheelerPermutationDecoding(BurrowsWheelerTransformationCore core, Runnable onPreBegin, Runnable onPostEnd) {
         super(core, onPreBegin, onPostEnd);
     }
 
     protected void launch(String input, int decodingIndex, BurrowsWheelerTransformationCore.Permutation permutation, boolean[] permutated) {
-        super.launch(input);
-        this.index = decodingIndex;
         this.permutation = permutation;
+        this.permutated = permutated;
+        super.launch(this.permutate(input));
+        this.index = decodingIndex;
     }
 
-    private void permutate() {
-        // make deep copy of inputTable
-        BurrowsWheelerTransformationCore.BurrowsWheelerTableLine[] lines = new BurrowsWheelerTransformationCore.BurrowsWheelerTableLine[this.inputTable.length];
-        for (int i = 0; i < lines.length; i++) {
-            lines[i] = this.inputTable[i].contentCopy(i);
-        }
-        String textOnIndex = this.inputTable[this.index].toString();
-        // align all lines to the index line
-        for (BurrowsWheelerTransformationCore.BurrowsWheelerTableLine line : lines) {
-            while (!line.isConvertible(textOnIndex, this.permutation)) {
-                line.rotateLeft();
+    private String permutate(String input) {
+        String tmp = "";
+        for (int i = 0; i < input.length(); i++) {
+            if (this.permutated[i]) {
+                tmp += this.permutation.permutate(input.charAt(i));
+            } else {
+                tmp += input.charAt(i);
             }
         }
-        // until a line is different on from the prefix, compare lines
-        for (BurrowsWheelerTransformationCore.BurrowsWheelerTableLine line : lines) {
-            switch ((int)Math.signum(line.toString().compareTo(textOnIndex))) {
-                case 0:
-                    continue;
-                case 1: // permutate only if different line is lexically larger
-                    this.inputTable[this.index] = this.permutation.permutate(this.inputTable[this.index]);
-                    return;
-                case -1:
-                    return;
-            }
-        }
-
-    }
-
-    private void revertPermutate() {
-
-        BurrowsWheelerTransformationCore.BurrowsWheelerTableLine inputTableLine = this.permutation.permutate(this.inputTable[this.index]);
-        if (inputTableLine.toString().compareTo(this.inputTable[this.index].toString()) < 0) {
-            this.inputTable[this.index] = inputTableLine;
-        }
-
+        return tmp;
     }
 
     @Override
-    public DebugQueue getExecution() {
-        DebugQueue queue = super.getExecution();
-        queue.add(DebugStep.builder()
-                .setForward(BurrowsWheelerPermutationDecoding.this::permutate)
-                .setBackward(BurrowsWheelerPermutationDecoding.this::revertPermutate)
-                .build());
-        return queue;
+    protected void sort() {
+        Arrays.sort(this.inputTable, (o1, o2) -> Character.compare(this.withPermutation(o1, 0), this.withPermutation(o2, 0)));
+    }
+
+    @Override
+    protected void revertSort() {
+        Arrays.sort(this.inputTable, inputTable[0].isSecondSlotFilled() ?
+                (o1, o2) -> Character.compare(this.withPermutation(o1, 1), this.withPermutation(o2, 1))
+                : BurrowsWheelerTransformationCore.BurrowsWheelerTableLine.firstSortingRevertComparator());
+    }
+
+    private char withPermutation (BurrowsWheelerTransformationCore.BurrowsWheelerTableLine line, int charIndex) {
+        return this.permutated[Arrays.asList(this.inputTable).indexOf(line)] ? this.permutation.permutate(line.toString().charAt(charIndex)) : line.toString().charAt(charIndex);
     }
 
     @Override
@@ -115,9 +83,23 @@ public class BurrowsWheelerPermutationDecoding extends BurrowsWheelerIntuitiveDe
                         }
                         for (int i = 0; i < this.inputField.getText().length(); i++) {
                             for (int j = 0; j < this.inputField.getText().length(); j++) {
+                                final int currentI = i;
+                                final int currentJ = j;
                                 TextField matrixField = new TextField();
                                 matrixField.setAlignment(Pos.CENTER);
-                                // TODO make sure the text of matrixField updates to this.inputTable[i].toString().charAt(j) whenever inputTable changes
+                                matrixField.setEditable(false);
+                                matrixField.setText(BurrowsWheelerPermutationDecoding.this.inputTable[i].toString());
+                                // make sure the text of matrixField updates to this.inputTable[i].toString().charAt(j) whenever inputTable changes
+                                BurrowsWheelerPermutationDecoding.this.inputTable[i].addObserver(new Observer() {
+                                    private BurrowsWheelerTransformationCore.BurrowsWheelerTableLine observedLine = BurrowsWheelerPermutationDecoding.this.inputTable[currentI];
+
+                                    @Override
+                                    public void update(Observable o, Object arg) {
+                                        if (o == observedLine) {
+                                            matrixField.setText(observedLine.toString().charAt(currentJ) + "");
+                                        }
+                                    }
+                                });
                                 GridPane.setRowIndex(matrixField, i);
                                 GridPane.setColumnIndex(matrixField, j);
                                 this.table.getChildren().add(matrixField);

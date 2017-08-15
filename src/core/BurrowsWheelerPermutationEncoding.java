@@ -14,6 +14,8 @@ import javafx.scene.layout.GridPane;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Observable;
+import java.util.Observer;
 
 /**
  * Created by root on 14.04.2017.
@@ -78,9 +80,23 @@ public class BurrowsWheelerPermutationEncoding extends BurrowsWheelerStandardEnc
                 this.launcher.setOnAction(event -> {
                     for (int i = 0; i < this.inputField.getText().length(); i++) {
                         for (int j = 0; j < this.inputField.getText().length(); j++) {
+                            final int currentI = i;
+                            final int currentJ = j;
                             TextField matrixField = new TextField();
                             matrixField.setAlignment(Pos.CENTER);
-                            // TODO make sure the text of matrixField updates to this.inputTable[i].toString().charAt(j) whenever inputTable changes
+                            matrixField.setEditable(false);
+                            matrixField.setText(BurrowsWheelerPermutationEncoding.this.inputTable[i].toString());
+                            // make sure the text of matrixField updates to this.inputTable[i].toString().charAt(j) whenever inputTable changes
+                            BurrowsWheelerPermutationEncoding.this.inputTable[i].addObserver(new Observer() {
+                                private BurrowsWheelerTransformationCore.BurrowsWheelerTableLine observedLine = BurrowsWheelerPermutationEncoding.this.inputTable[currentI];
+
+                                @Override
+                                public void update(Observable o, Object arg) {
+                                    if (o == observedLine) {
+                                        matrixField.setText(observedLine.toString().charAt(currentJ) + "");
+                                    }
+                                }
+                            });
                             GridPane.setRowIndex(matrixField, i);
                             GridPane.setColumnIndex(matrixField, j);
                             this.table.getChildren().add(matrixField);

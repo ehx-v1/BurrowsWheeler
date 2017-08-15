@@ -31,7 +31,7 @@ public class BurrowsWheelerPermutationDecodingTest {
 
         public boolean isReset() {
             for (BurrowsWheelerTransformationCore.BurrowsWheelerTableLine line : this.inputTable) {
-                for (char c : line.toString().substring(0, line.length() - 2).toCharArray()) { // all characters except last must be \0
+                for (char c : line.toString().substring(0, line.length() - 1).toCharArray()) { // all characters except last must be \0
                     if (c != '\0') return false;
                 }
             }
@@ -58,6 +58,10 @@ public class BurrowsWheelerPermutationDecodingTest {
     }
 
     private void assertProduces (String input, int index, int permutated, BurrowsWheelerTransformationCore.Permutation permutation, String expectedOutput) {
+        for (boolean permutationFlag : this.uut.parseFlags(permutated, input.length())) {
+            System.out.print(permutationFlag + ":");
+        }
+        System.out.println();
         DebugQueue queue = this.core.getRegisteredAlgorithm(BurrowsWheelerTransformationCore.Algorithms.values()[0]);
         this.uut.launch(input, index, permutation, permutated);
         while (!this.reachedEnd) {
@@ -85,7 +89,7 @@ public class BurrowsWheelerPermutationDecodingTest {
 
     @Test
     public void testAlgorithm2() {
-        assertProduces("bpraipckae", 4, "backpapier");
+        assertProduces("bpraipckae", 2, "backpapier");
     }
 
     @Test
@@ -172,7 +176,7 @@ public class BurrowsWheelerPermutationDecodingTest {
 
     @Test
     public void testAlgorithm14() {
-        assertProduces("uusdku", 5, 54, original -> {
+        assertProduces("uusdko", 5, 54, original -> {
             switch (original) {
                 case 'o':
                     return 'u';
@@ -186,7 +190,7 @@ public class BurrowsWheelerPermutationDecodingTest {
 
     @Test
     public void testAlgorithm15() {
-        assertProduces("mkprrroyitaaat", 7, 7030, original -> {
+        assertProduces("mkprrroytiaaat", 7, 7030, original -> {
             switch (original) {
                 case 'i':
                     return 't';

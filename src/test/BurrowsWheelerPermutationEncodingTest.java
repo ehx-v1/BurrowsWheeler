@@ -64,17 +64,6 @@ public class BurrowsWheelerPermutationEncodingTest {
     private boolean reachedEnd;
 
     private void assertProduces (String input, BurrowsWheelerTransformationCore.Permutation permutation, String expectedResult, int expectedIndexResult, int expectedPermutationIndexResult) {
-        String alphabet = "abcdefghijklmnopqrstuvwxyz";
-        BurrowsWheelerTransformationCore.BurrowsWheelerTableLine alphaLine = new BurrowsWheelerTransformationCore.BurrowsWheelerTableLine(alphabet.length(), 0);
-        for (char c : alphabet.toCharArray()) {
-            alphaLine.overwriteLast(c);
-            alphaLine.rotateLeft();
-        }
-        alphaLine.rotateRight();
-        System.out.println(alphabet);
-        System.out.println(alphaLine);
-        System.out.println(permutation.permutate(alphabet));
-        System.out.println(permutation.permutate(alphaLine));
         DebugQueue queue = this.core.getRegisteredAlgorithm(BurrowsWheelerTransformationCore.Algorithms.values()[0]);
         this.uut.launch(input, permutation);
         while (!this.reachedEnd) {
@@ -218,7 +207,7 @@ public class BurrowsWheelerPermutationEncodingTest {
                 default:
                     return original;
             }
-        }, "mkprrroyitaaat", 7, 7030);
+        }, "mkprrroytiaaat", 7, 7030);
     }
 
     @Test

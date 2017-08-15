@@ -3,10 +3,7 @@ package core;
 import gui.ViewerPane;
 import runtimeframework.DebugQueue;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by root on 14.04.2017.
@@ -84,7 +81,7 @@ public class BurrowsWheelerTransformationCore {
         return this.implementedAlgorithms.get(algorithm.ordinal());
     }
 
-    public static class BurrowsWheelerTableLine {
+    public static class BurrowsWheelerTableLine extends Observable{
         private char[] content;
         public final int position;
 
@@ -98,12 +95,16 @@ public class BurrowsWheelerTransformationCore {
 
         public void overwriteLast(char c) {
             this.content[this.length() - 1] = c;
+            this.setChanged();
+            this.notifyObservers();
         }
 
         public void rotateLeft() {
             char round = this.content[0];
             System.arraycopy(this.content, 1, this.content, 0, this.length() - 1);
             this.content[this.length() - 1] = round;
+            this.setChanged();
+            this.notifyObservers();
         }
 
         public void rotateRight() {
@@ -112,13 +113,15 @@ public class BurrowsWheelerTransformationCore {
                 this.content[this.length() - i] = this.content[this.length() - (i + 1)];
             }
             this.content[0] = round;
+            this.setChanged();
+            this.notifyObservers();
         }
 
         public int length() {
             return this.content.length;
         }
 
-        public boolean isSecondSlotEmpty() {
+        public boolean isSecondSlotFilled() {
             return this.length() > 1 && this.content[1] != '\0'; // assumes that EoS character is not actually used
         }
 

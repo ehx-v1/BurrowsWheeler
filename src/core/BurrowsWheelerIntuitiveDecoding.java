@@ -13,12 +13,14 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 
 import java.util.Arrays;
+import java.util.Observable;
+import java.util.Observer;
 
 /**
  * Created by root on 14.04.2017.
  */
 public class BurrowsWheelerIntuitiveDecoding implements BurrowsWheelerTransformationCore.AlgorithmImplementationStub {
-    private String input;
+    protected String input;
     private int inputLimit;
     protected BurrowsWheelerTransformationCore.BurrowsWheelerTableLine[] inputTable;
     protected int stepCount;
@@ -42,7 +44,9 @@ public class BurrowsWheelerIntuitiveDecoding implements BurrowsWheelerTransforma
         if (this.stepCount < this.input.length()) {
             for (int i = 0; i < this.input.length(); i++) {
                 this.inputTable[i].overwriteLast(this.input.charAt(i));
+                System.out.println(this.inputTable[i]);
             }
+            System.out.println();
         }
     }
 
@@ -58,7 +62,9 @@ public class BurrowsWheelerIntuitiveDecoding implements BurrowsWheelerTransforma
         if (this.stepCount < this.input.length()) {
             for (BurrowsWheelerTransformationCore.BurrowsWheelerTableLine inputLine : this.inputTable) {
                 inputLine.rotateRight();
+                System.out.println(inputLine);
             }
+            System.out.println();
         }
         this.stepCount++;
     }
@@ -72,16 +78,20 @@ public class BurrowsWheelerIntuitiveDecoding implements BurrowsWheelerTransforma
         }
     }
 
-    private void sort() {
+    protected void sort() {
         // should be immutable at iterations beyond the end
         Arrays.sort(inputTable, BurrowsWheelerTransformationCore.BurrowsWheelerTableLine.sortingComparator());
+        for (BurrowsWheelerTransformationCore.BurrowsWheelerTableLine inputLine : this.inputTable) {
+            System.out.println(inputLine);
+        }
+        System.out.println();
     }
 
-    private void revertSort() {
+    protected void revertSort() {
         // should be immutable at iterations beyond the end
         // either all or none of the table lines contain an actual second character to compare
         Arrays.sort(inputTable,
-                inputTable[0].isSecondSlotEmpty() ?
+                inputTable[0].isSecondSlotFilled() ?
                         BurrowsWheelerTransformationCore.BurrowsWheelerTableLine.sortingRevertComparator()
                         : BurrowsWheelerTransformationCore.BurrowsWheelerTableLine.firstSortingRevertComparator());
     }
@@ -130,9 +140,23 @@ public class BurrowsWheelerIntuitiveDecoding implements BurrowsWheelerTransforma
                         }
                         for (int i = 0; i < this.inputField.getText().length(); i++) {
                             for (int j = 0; j < this.inputField.getText().length(); j++) {
+                                final int currentI = i;
+                                final int currentJ = j;
                                 TextField matrixField = new TextField();
                                 matrixField.setAlignment(Pos.CENTER);
-                                // TODO make sure the text of matrixField updates to this.inputTable[i].toString().charAt(j) whenever inputTable changes
+                                matrixField.setEditable(false);
+                                matrixField.setText(BurrowsWheelerIntuitiveDecoding.this.inputTable[i].toString());
+                                // make sure the text of matrixField updates to this.inputTable[i].toString().charAt(j) whenever inputTable changes
+                                BurrowsWheelerIntuitiveDecoding.this.inputTable[i].addObserver(new Observer() {
+                                    private BurrowsWheelerTransformationCore.BurrowsWheelerTableLine observedLine = BurrowsWheelerIntuitiveDecoding.this.inputTable[currentI];
+
+                                    @Override
+                                    public void update(Observable o, Object arg) {
+                                        if (o == observedLine) {
+                                            matrixField.setText(observedLine.toString().charAt(currentJ) + "");
+                                        }
+                                    }
+                                });
                                 GridPane.setRowIndex(matrixField, i);
                                 GridPane.setColumnIndex(matrixField, j);
                                 this.table.getChildren().add(matrixField);
