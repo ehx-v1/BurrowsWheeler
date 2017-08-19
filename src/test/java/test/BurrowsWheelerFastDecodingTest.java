@@ -2,7 +2,7 @@ package test;
 
 import core.BurrowsWheelerFastDecoding;
 import core.BurrowsWheelerTransformationCore;
-import runtimeframework.DebugQueue;
+import util.runtimeframework.DebugQueue;
 
 import org.junit.Before;
 import org.junit.Test;

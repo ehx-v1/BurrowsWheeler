@@ -1,16 +1,17 @@
 package core;
 
 import gui.ViewerPane;
-import runtimeframework.DebugQueue;
-import runtimeframework.DebugStep;
+import util.runtimeframework.DebugQueue;
+import util.runtimeframework.DebugStep;
 
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.geometry.Pos;
+import javafx.stage.Stage;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.geometry.Pos;
 
 import java.util.Arrays;
 import java.util.Observable;
@@ -85,19 +86,20 @@ public class BurrowsWheelerStandardEncoding implements BurrowsWheelerTransformat
     }
 
     @Override
-    public ViewerPane getViewer() {
+    public ViewerPane getViewer(Stage stage) {
         return new ViewerPane() {
             private TextField inputField = new TextField();
             private Button launcher = new Button();
             private GridPane table = new GridPane();
 
-            {
+            { // TODO position children
                 this.launcher.setText("Launch");
                 this.launcher.setOnAction(event -> {
                     if (this.inputField.getText().length() > BurrowsWheelerStandardEncoding.this.inputLimit) {
                         // TODO make popup
                         return;
                     }
+                    BurrowsWheelerStandardEncoding.this.launch(this.inputField.getText().toLowerCase());
                     for (int i = 0; i < this.inputField.getText().length(); i++) {
                         for (int j = 0; j < this.inputField.getText().length(); j++) {
                             final int currentI = i;
@@ -117,12 +119,12 @@ public class BurrowsWheelerStandardEncoding implements BurrowsWheelerTransformat
                                     }
                                 }
                             });
+                            // TODO ensure clean update on sorting
                             GridPane.setRowIndex(matrixField, i);
                             GridPane.setColumnIndex(matrixField, j);
                             this.table.getChildren().add(matrixField);
                         }
                     }
-                    BurrowsWheelerStandardEncoding.this.launch(this.inputField.getText());
                 });
             }
 

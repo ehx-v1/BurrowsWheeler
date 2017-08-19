@@ -1,8 +1,8 @@
 package test;
 
-import core.BurrowsWheelerIntuitiveDecoding;
+import core.BurrowsWheelerStandardEncoding;
 import core.BurrowsWheelerTransformationCore;
-import runtimeframework.DebugQueue;
+import util.runtimeframework.DebugQueue;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -11,33 +11,39 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
- * Created by root on 27.07.2017.
+ * Created by root on 22.07.2017.
  */
-public class BurrowsWheelerIntuitiveDecodingTest {
-
-    private class ValueFetchableTestUnit extends BurrowsWheelerIntuitiveDecoding {
-        private int index;
+public class BurrowsWheelerStandardEncodingTest {
+    private class ValueFetchableTestUnit extends BurrowsWheelerStandardEncoding {
 
         public ValueFetchableTestUnit(BurrowsWheelerTransformationCore core, Runnable preBegin, Runnable postEnd) {
             super(core, preBegin, postEnd);
         }
 
-        public void launch(String input, int index) {
-            this.index = index;
+        @Override
+        public void launch (String input) {
             super.launch(input);
         }
 
+        // accumulating last characters
         public String getResult() {
-            return this.inputTable[this.index].toString();
+            String last = "";
+            for (BurrowsWheelerTransformationCore.BurrowsWheelerTableLine line : this.inputTable) {
+                last += line.toString().charAt(line.length()-1);
+            }
+            return last;
+        }
+
+        // same method that is/will be used in the viewer
+        public int getIndexResult() {
+            for (int i = 0; i < this.inputTable.length; i++) {
+                if (this.inputTable[i].toString().equals(this.input)) return i;
+            }
+            return -1;
         }
 
         public boolean isReset() {
-            for (BurrowsWheelerTransformationCore.BurrowsWheelerTableLine line : this.inputTable) {
-                for (char c : line.toString().substring(0, line.length() - 2).toCharArray()) { // all characters except last must be \0
-                    if (c != '\0') return false;
-                }
-            }
-            return true;
+            return this.filledLines <= 1;
         }
 
     }
@@ -47,13 +53,14 @@ public class BurrowsWheelerIntuitiveDecodingTest {
     private boolean reachedBegin;
     private boolean reachedEnd;
 
-    private void assertProduces (String input, int index, String expectedOutput) {
+    private void assertProduces (String input, String expectedResult, int expectedIndexResult) {
         DebugQueue queue = this.core.getRegisteredAlgorithm(BurrowsWheelerTransformationCore.Algorithms.values()[0]);
-        this.uut.launch(input, index);
+        this.uut.launch(input);
         while (!this.reachedEnd) {
             queue.stepForward();
         }
-        assertEquals(expectedOutput, this.uut.getResult());
+        assertEquals(expectedResult, this.uut.getResult());
+        assertEquals(expectedIndexResult, this.uut.getIndexResult());
         while (!this.reachedBegin) {
             queue.stepBack();
         }
@@ -70,52 +77,52 @@ public class BurrowsWheelerIntuitiveDecodingTest {
 
     @Test
     public void testAlgorithm1() {
-        assertProduces("snnaaa", 0, "ananas");
+        assertProduces("ananas", "snnaaa", 0);
     }
 
     @Test
     public void testAlgorithm2() {
-        assertProduces("bpraipckae", 2, "backpapier");
+        assertProduces("backpapier", "bpraipckae", 2);
     }
 
     @Test
     public void testAlgorithm3() {
-        assertProduces("pssmipissii", 4, "mississippi");
+        assertProduces("mississippi", "pssmipissii", 4);
     }
 
     @Test
     public void testAlgorithm4() {
-        assertProduces("uodusk", 3, "sudoku");
+        assertProduces("sudoku", "uodusk", 3);
     }
 
     @Test
     public void testAlgorithm5() {
-        assertProduces("mkproyitaaarrt", 5, "mariokartparty");
+        assertProduces("mariokartparty", "mkproyitaaarrt", 5);
     }
 
     @Test
     public void testAlgorithm6() {
-        assertProduces("ntneoidn", 4, "nintendo");
+        assertProduces("nintendo", "ntneoidn", 4);
     }
 
     @Test
     public void testAlgorithm7() {
-        assertProduces("drrbeeee", 4, "erdbeere");
+        assertProduces("erdbeere", "drrbeeee", 4);
     }
 
     @Test
     public void testAlgorithm8() {
-        assertProduces("lgrgealare", 6, "lagerregal");
+        assertProduces("lagerregal", "lgrgealare", 6);
     }
 
     @Test
     public void testAlgorithm9() {
-        assertProduces("sirgauteeee", 8, "saeugetiere");
+        assertProduces("saeugetiere", "sirgauteeee", 8);
     }
 
     @Test
     public void testAlgorithm10() {
-        assertProduces("yyyrrrbbbeeeccc", 3, "cybercybercyber");
+        assertProduces("cybercybercyber", "yyyrrrbbbeeeccc", 3);
     }
 
 }

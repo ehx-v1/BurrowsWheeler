@@ -1,8 +1,9 @@
 package core;
 
 import gui.ViewerPane;
-import runtimeframework.DebugQueue;
-import runtimeframework.DebugStep;
+import javafx.stage.Stage;
+import util.runtimeframework.DebugQueue;
+import util.runtimeframework.DebugStep;
 
 /**
  * Created by root on 14.04.2017.
@@ -27,7 +28,7 @@ public class BurrowsWheelerDecodingConceptPresentation implements BurrowsWheeler
     }
 
     @Override
-    public ViewerPane getViewer() {
+    public ViewerPane getViewer(Stage stage) {
         return new ViewerPane(){
             // TODO
         };

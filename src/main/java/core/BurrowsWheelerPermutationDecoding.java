@@ -1,15 +1,26 @@
 package core;
 
 import gui.ViewerPane;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.StackPane;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Observable;
+import java.util.Observer;
 
 /**
  * Created by root on 14.04.2017.
@@ -60,7 +71,7 @@ public class BurrowsWheelerPermutationDecoding extends BurrowsWheelerIntuitiveDe
     }
 
     @Override
-    public ViewerPane getViewer() {
+    public ViewerPane getViewer(Stage stage) {
         return new ViewerPane() {
             private TextField inputField = new TextField();
             private TextField indexField = new TextField();
@@ -70,15 +81,43 @@ public class BurrowsWheelerPermutationDecoding extends BurrowsWheelerIntuitiveDe
             private BurrowsWheelerTransformationCore.Permutation permutation;
             private Button permutationMenu = new Button();
             private GridPane table = new GridPane();
+            private Stage actualPermutationMenu = new Stage();
+            private Stage indexOutOfWordErrorWindow = new Stage();
+            private Stage indexNotANumberErrorWindow = new Stage();
+            private Stage wordLengthExceedsLimitErrorWindow = new Stage();
 
-            {
+            { // TODO position children
+                StackPane error1Root = new StackPane();
+                Scene error1Scene = new Scene(error1Root); // TODO size subwindow
+                this.indexOutOfWordErrorWindow.setScene(error1Scene);
+                this.indexOutOfWordErrorWindow.initStyle(StageStyle.DECORATED);
+                this.indexOutOfWordErrorWindow.initModality(Modality.NONE);
+                this.indexOutOfWordErrorWindow.initOwner(stage);
+                // TODO fill indexOutOfWordErrorWindow with message and button
+                StackPane error2Root = new StackPane();
+                Scene error2Scene = new Scene(error2Root); // TODO size subwindow
+                this.indexNotANumberErrorWindow.setScene(error2Scene);
+                this.indexNotANumberErrorWindow.initStyle(StageStyle.DECORATED);
+                this.indexNotANumberErrorWindow.initModality(Modality.NONE);
+                this.indexNotANumberErrorWindow.initOwner(stage);
+                StackPane error3Root = new StackPane();
+                // TODO fill indexNotANumberErrorWindow with message and button
+                Scene error3Scene = new Scene(error3Root); // TODO size subwindow
+                this.wordLengthExceedsLimitErrorWindow.setScene(error3Scene);
+                this.wordLengthExceedsLimitErrorWindow.initStyle(StageStyle.DECORATED);
+                this.wordLengthExceedsLimitErrorWindow.initModality(Modality.NONE);
+                this.wordLengthExceedsLimitErrorWindow.initOwner(stage);
+                // TODO fill wordLengthExceedsLimitErrorWindow with message and button
                 this.launcher.setText("Launch");
                 this.launcher.setOnMouseClicked(event -> {
-                    try {
+                    try {if (this.inputField.getText().length() > BurrowsWheelerPermutationDecoding.this.inputLimit) {
+                        this.wordLengthExceedsLimitErrorWindow.show();
+                        return;
+                    }
                         this.readoutIndex = Integer.parseInt(this.indexField.getText());
                         if (this.readoutIndex >= this.inputField.getText().length()) {
                             this.readoutIndex = 0;
-                            // TODO make popup that index out of word
+                            this.indexOutOfWordErrorWindow.show();
                             return;
                         }
                         for (int i = 0; i < this.inputField.getText().length(); i++) {
@@ -107,7 +146,7 @@ public class BurrowsWheelerPermutationDecoding extends BurrowsWheelerIntuitiveDe
                         }
                         BurrowsWheelerPermutationDecoding.this.launch(this.inputField.getText(), this.readoutIndex, this.permutation, this.parseFlags(Integer.parseInt(this.permutationIndexField.getText()), this.inputField.getText().length()));
                     } catch (NumberFormatException e) {
-                        // TODO make popup that index input must be a number
+                        this.indexNotANumberErrorWindow.show();
                     }
                 });
                 this.permutation = new BurrowsWheelerTransformationCore.Permutation() {
@@ -129,10 +168,16 @@ public class BurrowsWheelerPermutationDecoding extends BurrowsWheelerIntuitiveDe
                         return this.actualPermutation.get(original);
                     }
                 };
-                // TODO set icon and tooltip of permutationMenu
-                this.permutationMenu.setOnMouseClicked(event -> {
-                    // TODO make popup menu that allows for setting the mapping for each lowercase character
-                });
+                StackPane subroot = new StackPane();
+                Scene subscene = new Scene(subroot); // TODO size subwindow
+                this.actualPermutationMenu.setScene(subscene);
+                this.actualPermutationMenu.initStyle(StageStyle.DECORATED);
+                this.actualPermutationMenu.initModality(Modality.NONE);
+                this.actualPermutationMenu.initOwner(stage);
+                // TODO fill actualPermutationMenu with permutation mapping text fields and a confirm button that sets the permutation mappings
+                // TODO set icon of permutationMenu
+                this.permutationMenu.setTooltip(new Tooltip("Set permutation..."));
+                this.permutationMenu.setOnMouseClicked(event -> this.actualPermutationMenu.show());
             }
 
             private boolean[] parseFlags(int flagContainer, int sizeToParse) {

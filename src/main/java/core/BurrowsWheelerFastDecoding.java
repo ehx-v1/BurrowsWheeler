@@ -1,21 +1,20 @@
 package core;
 
 import gui.ViewerPane;
-import runtimeframework.DebugQueue;
-import runtimeframework.DebugStep;
-
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
+import javafx.stage.Stage;
+import util.runtimeframework.DebugQueue;
+import util.runtimeframework.DebugStep;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.List;
 
 /**
  * Created by root on 14.04.2017.
@@ -46,7 +45,7 @@ public class BurrowsWheelerFastDecoding implements BurrowsWheelerTransformationC
 
     }
 
-    protected List<IndexedCharacter> characters;
+    protected ObservableList<IndexedCharacter> characters;
     private int index;
     protected String result; // will be used in the visualization
 
@@ -55,7 +54,7 @@ public class BurrowsWheelerFastDecoding implements BurrowsWheelerTransformationC
     }
 
     protected void launch(String input, int index) {
-        this.characters = new ArrayList<>();
+        this.characters = FXCollections.observableArrayList();
         for (char c : input.toCharArray()) {
             this.characters.add(new IndexedCharacter(c));
         }
@@ -112,7 +111,7 @@ public class BurrowsWheelerFastDecoding implements BurrowsWheelerTransformationC
     }
 
     @Override
-    public ViewerPane getViewer() {
+    public ViewerPane getViewer(Stage stage) {
         return new ViewerPane() {
             private ObservableList<Node> childrenCache;
             private TextField inputField = new TextField();
@@ -130,15 +129,21 @@ public class BurrowsWheelerFastDecoding implements BurrowsWheelerTransformationC
                         }
                         BurrowsWheelerFastDecoding.this.launch(this.inputField.getText(), Integer.parseInt(this.indexField.getText()));
                         for (int i = 0; i < this.inputField.getText().length(); i++) {
+                            final int currentI = i;
                             TextField charText = new TextField();
                             charText.setAlignment(Pos.CENTER);
-                            // TODO make sure the text of charText updates to index of characters.get(i) whenever it changes
-                            GridPane.setRowIndex(charText, i);
-                            this.matching.getChildren().add(charText);
+                            charText.setText(BurrowsWheelerFastDecoding.this.characters.get(i).content + "");
 
                             TextField charIndex = new TextField();
                             charIndex.setAlignment(Pos.CENTER);
-                            // TODO make sure the text of charText updates to content of characters.get(i) whenever it changes
+                            charIndex.setText(BurrowsWheelerFastDecoding.this.characters.get(i).index + "");
+
+                            BurrowsWheelerFastDecoding.this.characters.addListener((ListChangeListener<IndexedCharacter>) c -> {
+                                charText.setText(BurrowsWheelerFastDecoding.this.characters.get(currentI).content + "");
+                                charIndex.setText(BurrowsWheelerFastDecoding.this.characters.get(currentI).index + "");
+                            });
+                            GridPane.setRowIndex(charText, i);
+                            this.matching.getChildren().add(charText);
                             GridPane.setRowIndex(charIndex, i);
                             GridPane.setColumnIndex(charIndex, 1);
                             this.matching.getChildren().add(charIndex);

@@ -1,16 +1,17 @@
 package core;
 
 import gui.ViewerPane;
-import runtimeframework.DebugQueue;
-import runtimeframework.DebugStep;
+import util.runtimeframework.DebugQueue;
+import util.runtimeframework.DebugStep;
 
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.geometry.Pos;
+import javafx.stage.Stage;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.geometry.Pos;
 
 import java.util.Arrays;
 import java.util.Observable;
@@ -21,7 +22,7 @@ import java.util.Observer;
  */
 public class BurrowsWheelerIntuitiveDecoding implements BurrowsWheelerTransformationCore.AlgorithmImplementationStub {
     protected String input;
-    private int inputLimit;
+    protected int inputLimit;
     protected BurrowsWheelerTransformationCore.BurrowsWheelerTableLine[] inputTable;
     protected int stepCount;
 
@@ -116,7 +117,7 @@ public class BurrowsWheelerIntuitiveDecoding implements BurrowsWheelerTransforma
     }
 
     @Override
-    public ViewerPane getViewer() {
+    public ViewerPane getViewer(Stage stage) {
         return new ViewerPane() {
             private TextField inputField = new TextField();
             private TextField indexField = new TextField();
@@ -124,7 +125,7 @@ public class BurrowsWheelerIntuitiveDecoding implements BurrowsWheelerTransforma
             private int readoutIndex = 0;
             private GridPane table = new GridPane();
 
-            {
+            { // TODO position children
                 this.launcher.setText("Launch");
                 this.launcher.setOnMouseClicked(event -> {
                     try {

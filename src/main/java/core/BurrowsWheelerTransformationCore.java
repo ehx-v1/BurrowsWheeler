@@ -1,9 +1,15 @@
 package core;
 
 import gui.ViewerPane;
-import runtimeframework.DebugQueue;
+import util.runtimeframework.DebugQueue;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Observable;
+
+import javafx.stage.Stage;
 
 /**
  * Created by root on 14.04.2017.
@@ -23,7 +29,7 @@ public class BurrowsWheelerTransformationCore {
 
         DebugQueue getExecution();
 
-        ViewerPane getViewer();
+        ViewerPane getViewer (Stage stage);
 
     }
 
@@ -53,6 +59,10 @@ public class BurrowsWheelerTransformationCore {
             }
             output.rotateRight();
             return output;
+        }
+
+        default void setMapping (char original, char replace) {
+            // empty method, needed for being visible when overridden by anonymous classes (not used other than on anonymous classes)
         }
 
     }
