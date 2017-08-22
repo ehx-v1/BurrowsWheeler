@@ -5,9 +5,13 @@ import util.runtimeframework.DebugQueue;
 import util.runtimeframework.DebugStep;
 
 import javafx.stage.Stage;
+import javafx.stage.Modality;
+import javafx.stage.StageStyle;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.GridPane;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -91,12 +95,28 @@ public class BurrowsWheelerStandardEncoding implements BurrowsWheelerTransformat
             private TextField inputField = new TextField();
             private Button launcher = new Button();
             private GridPane table = new GridPane();
+            private Stage wordLengthExceedsLimitErrorWindow = new Stage();
 
             { // TODO position children
+                StackPane error3Root = new StackPane();
+                TextField error3Message = new TextField();
+                error3Message.setEditable(false);
+                error3Message.setText("Please enter a word that's shorter than the length limit,\nor change the length limit for your word to fit.");
+                error3Message.setAlignment(Pos.TOP_CENTER);
+                Button error3OK = new Button();
+                error3OK.setText("OK");
+                error3OK.setOnMouseClicked(event -> this.wordLengthExceedsLimitErrorWindow.hide());
+                error3Root.getChildren().addAll(error3Message, error3OK);
+                Scene error3Scene = new Scene(error3Root); // TODO size subwindow
+                this.wordLengthExceedsLimitErrorWindow.setTitle("Error");
+                this.wordLengthExceedsLimitErrorWindow.setScene(error3Scene);
+                this.wordLengthExceedsLimitErrorWindow.initStyle(StageStyle.DECORATED);
+                this.wordLengthExceedsLimitErrorWindow.initModality(Modality.NONE);
+                this.wordLengthExceedsLimitErrorWindow.initOwner(stage);
                 this.launcher.setText("Launch");
                 this.launcher.setOnAction(event -> {
                     if (this.inputField.getText().length() > BurrowsWheelerStandardEncoding.this.inputLimit) {
-                        // TODO make popup
+                        this.wordLengthExceedsLimitErrorWindow.show();
                         return;
                     }
                     BurrowsWheelerStandardEncoding.this.launch(this.inputField.getText().toLowerCase());

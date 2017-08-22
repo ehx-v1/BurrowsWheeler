@@ -5,9 +5,13 @@ import util.runtimeframework.DebugQueue;
 import util.runtimeframework.DebugStep;
 
 import javafx.stage.Stage;
+import javafx.stage.Modality;
+import javafx.stage.StageStyle;
+import javafx.scene.Scene;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.GridPane;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -124,19 +128,65 @@ public class BurrowsWheelerIntuitiveDecoding implements BurrowsWheelerTransforma
             private Button launcher = new Button();
             private int readoutIndex = 0;
             private GridPane table = new GridPane();
+            private Stage indexOutOfWordErrorWindow = new Stage();
+            private Stage indexNotANumberErrorWindow = new Stage();
+            private Stage wordLengthExceedsLimitErrorWindow = new Stage();
 
             { // TODO position children
+                StackPane error1Root = new StackPane();
+                TextField error1Message = new TextField();
+                error1Message.setEditable(false);
+                error1Message.setText("Please select an index within the word you enter.");
+                Button error1OK = new Button();
+                error1OK.setText("OK");
+                error1OK.setOnMouseClicked(event -> this.indexOutOfWordErrorWindow.hide());
+                error1Root.getChildren().addAll(error1Message, error1OK);
+                Scene error1Scene = new Scene(error1Root); // TODO size subwindow
+                this.indexOutOfWordErrorWindow.setTitle("Error");
+                this.indexOutOfWordErrorWindow.setScene(error1Scene);
+                this.indexOutOfWordErrorWindow.initStyle(StageStyle.DECORATED);
+                this.indexOutOfWordErrorWindow.initModality(Modality.NONE);
+                this.indexOutOfWordErrorWindow.initOwner(stage);
+                StackPane error2Root = new StackPane();
+                TextField error2Message = new TextField();
+                error2Message.setEditable(false);
+                error2Message.setText("Please enter a number for the index.");
+                Button error2OK = new Button();
+                error2OK.setText("OK");
+                error2OK.setOnMouseClicked(event -> this.indexNotANumberErrorWindow.hide());
+                error2Root.getChildren().addAll(error2Message, error2OK);
+                Scene error2Scene = new Scene(error2Root); // TODO size subwindow
+                this.indexNotANumberErrorWindow.setTitle("Error");
+                this.indexNotANumberErrorWindow.setScene(error2Scene);
+                this.indexNotANumberErrorWindow.initStyle(StageStyle.DECORATED);
+                this.indexNotANumberErrorWindow.initModality(Modality.NONE);
+                this.indexNotANumberErrorWindow.initOwner(stage);
+                StackPane error3Root = new StackPane();
+                TextField error3Message = new TextField();
+                error3Message.setEditable(false);
+                error3Message.setText("Please enter a word that's shorter than the length limit,\nor change the length limit for your word to fit.");
+                error3Message.setAlignment(Pos.TOP_CENTER);
+                Button error3OK = new Button();
+                error3OK.setText("OK");
+                error3OK.setOnMouseClicked(event -> this.wordLengthExceedsLimitErrorWindow.hide());
+                error3Root.getChildren().addAll(error3Message, error3OK);
+                Scene error3Scene = new Scene(error3Root); // TODO size subwindow
+                this.wordLengthExceedsLimitErrorWindow.setTitle("Error");
+                this.wordLengthExceedsLimitErrorWindow.setScene(error3Scene);
+                this.wordLengthExceedsLimitErrorWindow.initStyle(StageStyle.DECORATED);
+                this.wordLengthExceedsLimitErrorWindow.initModality(Modality.NONE);
+                this.wordLengthExceedsLimitErrorWindow.initOwner(stage);
                 this.launcher.setText("Launch");
                 this.launcher.setOnMouseClicked(event -> {
                     try {
                         if (this.inputField.getText().length() > BurrowsWheelerIntuitiveDecoding.this.inputLimit) {
-                            // TODO make popup
+                            this.wordLengthExceedsLimitErrorWindow.show();
                             return;
                         }
                         this.readoutIndex = Integer.parseInt(this.indexField.getText());
                         if (this.readoutIndex >= this.inputField.getText().length()) {
                             this.readoutIndex = 0;
-                            // TODO make popup that index out of word
+                            this.indexOutOfWordErrorWindow.show();
                             return;
                         }
                         for (int i = 0; i < this.inputField.getText().length(); i++) {
@@ -158,6 +208,7 @@ public class BurrowsWheelerIntuitiveDecoding implements BurrowsWheelerTransforma
                                         }
                                     }
                                 });
+                                // TODO ensure clean update on sorting
                                 GridPane.setRowIndex(matrixField, i);
                                 GridPane.setColumnIndex(matrixField, j);
                                 this.table.getChildren().add(matrixField);
@@ -165,7 +216,7 @@ public class BurrowsWheelerIntuitiveDecoding implements BurrowsWheelerTransforma
                         }
                         BurrowsWheelerIntuitiveDecoding.this.launch(this.inputField.getText());
                     } catch (NumberFormatException e) {
-                        // TODO make popup that index input must be a number
+                        this.indexNotANumberErrorWindow.show();
                     }
                 });
             }

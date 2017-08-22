@@ -1,7 +1,6 @@
 package core;
 
 import gui.ViewerPane;
-import javafx.scene.control.Tooltip;
 import util.runtimeframework.DebugQueue;
 import util.runtimeframework.DebugStep;
 
@@ -15,6 +14,7 @@ import javafx.stage.StageStyle;
 import javafx.stage.Modality;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 
@@ -80,14 +80,29 @@ public class BurrowsWheelerPermutationEncoding extends BurrowsWheelerStandardEnc
             private Button permutationMenu = new Button();
             private GridPane table = new GridPane();
             private Stage actualPermutationMenu = new Stage();
+            private Stage wordLengthExceedsLimitErrorWindow = new Stage();
             // TODO display fields for results
 
             { // TODO position children
-
+                StackPane error3Root = new StackPane();
+                TextField error3Message = new TextField();
+                error3Message.setEditable(false);
+                error3Message.setText("Please enter a word that's shorter than the length limit,\nor change the length limit for your word to fit.");
+                error3Message.setAlignment(Pos.TOP_CENTER);
+                Button error3OK = new Button();
+                error3OK.setText("OK");
+                error3OK.setOnMouseClicked(event -> this.wordLengthExceedsLimitErrorWindow.hide());
+                error3Root.getChildren().addAll(error3Message, error3OK);
+                Scene error3Scene = new Scene(error3Root); // TODO size subwindow
+                this.wordLengthExceedsLimitErrorWindow.setTitle("Error");
+                this.wordLengthExceedsLimitErrorWindow.setScene(error3Scene);
+                this.wordLengthExceedsLimitErrorWindow.initStyle(StageStyle.DECORATED);
+                this.wordLengthExceedsLimitErrorWindow.initModality(Modality.NONE);
+                this.wordLengthExceedsLimitErrorWindow.initOwner(stage);
                 this.launcher.setText("Launch");
                 this.launcher.setOnAction(event -> {
                     if (this.inputField.getText().length() > BurrowsWheelerPermutationEncoding.this.inputLimit) {
-                        // TODO make popup
+                        this.wordLengthExceedsLimitErrorWindow.show();
                         return;
                     }
                     BurrowsWheelerPermutationEncoding.this.launch(this.inputField.getText().toLowerCase());
@@ -110,7 +125,7 @@ public class BurrowsWheelerPermutationEncoding extends BurrowsWheelerStandardEnc
                                     }
                                 }
                             });
-                            // TODO ensure clean update when sorting
+                            // TODO ensure clean update on sorting
                             GridPane.setRowIndex(matrixField, i);
                             GridPane.setColumnIndex(matrixField, j);
                             this.table.getChildren().add(matrixField);
@@ -138,17 +153,26 @@ public class BurrowsWheelerPermutationEncoding extends BurrowsWheelerStandardEnc
                     }
                 };
                 StackPane subroot = new StackPane();
-                GridPane permutations = new GridPane();
-                for (char c = 'a'; c <= 'z'; c++) {
-                    TextField characterIndexField = new TextField();
-                    characterIndexField.setEditable(false);
-                    characterIndexField.setText(c + "");
-                    GridPane.setRowIndex(characterIndexField, c - 'a');
-                    TextField characterMappingField = new TextField();
-                    GridPane.setRowIndex(characterMappingField, c - 'a');
-                    GridPane.setColumnIndex(characterMappingField, 1);
-                    permutations.getChildren().addAll(characterIndexField, characterMappingField);
+                // fill actualPermutationMenu with permutation mapping text fields and a confirm button that sets the permutation mappings
+                TextField[] labelFields = new TextField[26];
+                TextField[] inputFields = new TextField[26];
+                for (char c = 'a'; c < 'z'; c++) {
+                    labelFields[c - 'a'] = new TextField();
+                    labelFields[c - 'a'].setEditable(false);
+                    labelFields[c - 'a'].setText(c + "");
+                    inputFields[c - 'a'] = new TextField();
+                    inputFields[c - 'a'].setText(c + "");
+                    subroot.getChildren().addAll(labelFields[c - 'a'], inputFields[c - 'a']);
                 }
+                Button confirmer = new Button();
+                confirmer.setText("OK");
+                confirmer.setOnMouseClicked(event -> {
+                    for (int i = 0; i < 26; i++) {
+                        this.permutation.setMapping(labelFields[i].getText().charAt(0), inputFields[i].getText().charAt(0));
+                    }
+                    this.actualPermutationMenu.hide();
+                });
+                subroot.getChildren().add(confirmer);
                 Scene subscene = new Scene(subroot); // TODO size subwindow
                 this.actualPermutationMenu.setScene(subscene);
                 this.actualPermutationMenu.initStyle(StageStyle.DECORATED);
