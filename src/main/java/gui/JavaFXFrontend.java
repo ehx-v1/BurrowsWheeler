@@ -98,6 +98,7 @@ public class JavaFXFrontend extends Application {
         limitSettingLabel.setEditable(false);
         limitSettingLabel.setText("Maximal word length:");
         TextField limitSettingInput = new TextField();
+        limitSettingInput.setText(this.readMaxLengthFromConfig() + "");
         Button confirmSettings = new Button();
         confirmSettings.setDefaultButton(true);
         confirmSettings.setText("OK");
@@ -122,19 +123,22 @@ public class JavaFXFrontend extends Application {
             } catch (IOException e) {
                 System.err.println("Warning: File \"" + PROPERTY_FILE + "\" cannot be written");
             }
+            settingsStage.hide();
         });
         Button cancelSettings = new Button();
         cancelSettings.setCancelButton(true);
         cancelSettings.setText("Cancel");
-
+        cancelSettings.setOnMouseClicked(event -> {
+            limitSettingInput.setText(this.readMaxLengthFromConfig() + "");
+            settingsStage.hide();
+        });
         subroot4.getChildren().addAll(limitSettingLabel, limitSettingInput, confirmSettings);
         Scene settingsScene = new Scene(subroot4); // TODO size subwindow
-        settingsStage.setTitle("Info");
+        settingsStage.setTitle("Settings");
         settingsStage.setScene(settingsScene);
         settingsStage.initStyle(StageStyle.DECORATED);
         settingsStage.initModality(Modality.NONE);
         settingsStage.initOwner(primaryStage);
-        // TODO fill settingsStage with all options and Confirm/Cancel buttons
         ToolBar top = new ToolBar();
         MenuBar menu = new MenuBar();
         Menu actualMenu = new Menu();
@@ -172,7 +176,7 @@ public class JavaFXFrontend extends Application {
         settings.setOnMouseClicked(event -> settingsStage.show());
         top.getItems().add(settings);
         root.getChildren().add(top);
-        Scene mainWindow = new Scene(root); // TODO size main window
+        Scene mainWindow = new Scene(root, Math.max(top.getWidth(), paneContainer.getLayoutX()), top.getHeight() + paneContainer.getLayoutY());
         primaryStage.setTitle("Burrows Wheeler Transformation - Universal GUI");
         primaryStage.setScene(mainWindow);
         primaryStage.show();
