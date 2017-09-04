@@ -133,7 +133,7 @@ public class BurrowsWheelerIntuitiveDecoding implements BurrowsWheelerTransforma
             private Stage wordLengthExceedsLimitErrorWindow = new Stage();
 
             { // TODO position children
-                StackPane error1Root = new StackPane();
+                StackPane error1Root = new StackPane(); // TODO replace with appropriate layout element
                 TextField error1Message = new TextField();
                 error1Message.setEditable(false);
                 error1Message.setText("Please select an index within the word you enter.");
@@ -141,7 +141,7 @@ public class BurrowsWheelerIntuitiveDecoding implements BurrowsWheelerTransforma
                 error1OK.setText("OK");
                 error1OK.setOnMouseClicked(event -> this.indexOutOfWordErrorWindow.hide());
                 error1Root.getChildren().addAll(error1Message, error1OK);
-                Scene error1Scene = new Scene(error1Root); // TODO size subwindow
+                Scene error1Scene = new Scene(error1Root);
                 this.indexOutOfWordErrorWindow.setTitle("Error");
                 this.indexOutOfWordErrorWindow.setScene(error1Scene);
                 this.indexOutOfWordErrorWindow.initStyle(StageStyle.DECORATED);
@@ -155,13 +155,13 @@ public class BurrowsWheelerIntuitiveDecoding implements BurrowsWheelerTransforma
                 error2OK.setText("OK");
                 error2OK.setOnMouseClicked(event -> this.indexNotANumberErrorWindow.hide());
                 error2Root.getChildren().addAll(error2Message, error2OK);
-                Scene error2Scene = new Scene(error2Root); // TODO size subwindow
+                Scene error2Scene = new Scene(error2Root);
                 this.indexNotANumberErrorWindow.setTitle("Error");
                 this.indexNotANumberErrorWindow.setScene(error2Scene);
                 this.indexNotANumberErrorWindow.initStyle(StageStyle.DECORATED);
                 this.indexNotANumberErrorWindow.initModality(Modality.NONE);
                 this.indexNotANumberErrorWindow.initOwner(stage);
-                StackPane error3Root = new StackPane();
+                StackPane error3Root = new StackPane(); // TODO replace with appropriate layout element
                 TextField error3Message = new TextField();
                 error3Message.setEditable(false);
                 error3Message.setText("Please enter a word that's shorter than the length limit,\nor change the length limit for your word to fit.");
@@ -170,7 +170,7 @@ public class BurrowsWheelerIntuitiveDecoding implements BurrowsWheelerTransforma
                 error3OK.setText("OK");
                 error3OK.setOnMouseClicked(event -> this.wordLengthExceedsLimitErrorWindow.hide());
                 error3Root.getChildren().addAll(error3Message, error3OK);
-                Scene error3Scene = new Scene(error3Root); // TODO size subwindow
+                Scene error3Scene = new Scene(error3Root);
                 this.wordLengthExceedsLimitErrorWindow.setTitle("Error");
                 this.wordLengthExceedsLimitErrorWindow.setScene(error3Scene);
                 this.wordLengthExceedsLimitErrorWindow.initStyle(StageStyle.DECORATED);

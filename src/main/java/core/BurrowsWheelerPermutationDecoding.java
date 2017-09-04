@@ -21,6 +21,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Created by root on 14.04.2017.
@@ -87,7 +89,7 @@ public class BurrowsWheelerPermutationDecoding extends BurrowsWheelerIntuitiveDe
             private Stage wordLengthExceedsLimitErrorWindow = new Stage();
 
             { // TODO position children
-                StackPane error1Root = new StackPane();
+                StackPane error1Root = new StackPane(); // TODO replace with appropriate layout element
                 TextField error1Message = new TextField();
                 error1Message.setEditable(false);
                 error1Message.setText("Please select an index within the word you enter.");
@@ -95,13 +97,13 @@ public class BurrowsWheelerPermutationDecoding extends BurrowsWheelerIntuitiveDe
                 error1OK.setText("OK");
                 error1OK.setOnMouseClicked(event -> this.indexOutOfWordErrorWindow.hide());
                 error1Root.getChildren().addAll(error1Message, error1OK);
-                Scene error1Scene = new Scene(error1Root); // TODO size subwindow
+                Scene error1Scene = new Scene(error1Root);
                 this.indexOutOfWordErrorWindow.setTitle("Error");
                 this.indexOutOfWordErrorWindow.setScene(error1Scene);
                 this.indexOutOfWordErrorWindow.initStyle(StageStyle.DECORATED);
                 this.indexOutOfWordErrorWindow.initModality(Modality.NONE);
                 this.indexOutOfWordErrorWindow.initOwner(stage);
-                StackPane error2Root = new StackPane();
+                StackPane error2Root = new StackPane(); // TODO replace with appropriate layout element
                 TextField error2Message = new TextField();
                 error2Message.setEditable(false);
                 error2Message.setText("Please enter a number for the index.");
@@ -109,13 +111,13 @@ public class BurrowsWheelerPermutationDecoding extends BurrowsWheelerIntuitiveDe
                 error2OK.setText("OK");
                 error2OK.setOnMouseClicked(event -> this.indexNotANumberErrorWindow.hide());
                 error2Root.getChildren().addAll(error2Message, error2OK);
-                Scene error2Scene = new Scene(error2Root); // TODO size subwindow
+                Scene error2Scene = new Scene(error2Root);
                 this.indexNotANumberErrorWindow.setTitle("Error");
                 this.indexNotANumberErrorWindow.setScene(error2Scene);
                 this.indexNotANumberErrorWindow.initStyle(StageStyle.DECORATED);
                 this.indexNotANumberErrorWindow.initModality(Modality.NONE);
                 this.indexNotANumberErrorWindow.initOwner(stage);
-                StackPane error3Root = new StackPane();
+                StackPane error3Root = new StackPane(); // TODO replace with appropriate layout element
                 TextField error3Message = new TextField();
                 error3Message.setEditable(false);
                 error3Message.setText("Please enter a word that's shorter than the length limit,\nor change the length limit for your word to fit.");
@@ -124,7 +126,7 @@ public class BurrowsWheelerPermutationDecoding extends BurrowsWheelerIntuitiveDe
                 error3OK.setText("OK");
                 error3OK.setOnMouseClicked(event -> this.wordLengthExceedsLimitErrorWindow.hide());
                 error3Root.getChildren().addAll(error3Message, error3OK);
-                Scene error3Scene = new Scene(error3Root); // TODO size subwindow
+                Scene error3Scene = new Scene(error3Root);
                 this.wordLengthExceedsLimitErrorWindow.setTitle("Error");
                 this.wordLengthExceedsLimitErrorWindow.setScene(error3Scene);
                 this.wordLengthExceedsLimitErrorWindow.initStyle(StageStyle.DECORATED);
@@ -191,7 +193,7 @@ public class BurrowsWheelerPermutationDecoding extends BurrowsWheelerIntuitiveDe
                         return this.actualPermutation.get(original);
                     }
                 };
-                StackPane subroot = new StackPane();
+                StackPane subroot = new StackPane(); // TODO replace with appropriate layout element
                 // fill actualPermutationMenu with permutation mapping text fields and a confirm button that sets the permutation mappings
                 TextField[] labelFields = new TextField[26];
                 TextField[] inputFields = new TextField[26];
@@ -199,10 +201,15 @@ public class BurrowsWheelerPermutationDecoding extends BurrowsWheelerIntuitiveDe
                     labelFields[c - 'a'] = new TextField();
                     labelFields[c - 'a'].setEditable(false);
                     labelFields[c - 'a'].setText(c + "");
+                    GridPane.setRowIndex(labelFields[c - 'a'], c - 'a');
                     inputFields[c - 'a'] = new TextField();
                     inputFields[c - 'a'].setText(c + "");
-                    subroot.getChildren().addAll(labelFields[c - 'a'], inputFields[c - 'a']);
+                    GridPane.setRowIndex(inputFields[c - 'a'], c - 'a');
+                    GridPane.setColumnIndex(inputFields[c - 'a'], 1);
                 }
+                GridPane permutationTable = new GridPane();
+                permutationTable.getChildren().addAll(Stream.concat(Arrays.stream(labelFields), Arrays.stream(inputFields)).collect(Collectors.toList()));
+                subroot.getChildren().add(permutationTable);
                 Button confirmer = new Button();
                 confirmer.setText("OK");
                 confirmer.setOnMouseClicked(event -> {
@@ -212,7 +219,7 @@ public class BurrowsWheelerPermutationDecoding extends BurrowsWheelerIntuitiveDe
                     this.actualPermutationMenu.hide();
                 });
                 subroot.getChildren().add(confirmer);
-                Scene subscene = new Scene(subroot); // TODO size subwindow
+                Scene subscene = new Scene(subroot);
                 this.actualPermutationMenu.setTitle("Set permutations...");
                 this.actualPermutationMenu.setScene(subscene);
                 this.actualPermutationMenu.initStyle(StageStyle.DECORATED);

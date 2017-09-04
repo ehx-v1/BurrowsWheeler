@@ -127,7 +127,7 @@ public class BurrowsWheelerFastDecoding implements BurrowsWheelerTransformationC
             private Stage indexNotANumberErrorWindow = new Stage();
 
             {
-                StackPane error1Root = new StackPane();
+                StackPane error1Root = new StackPane(); // TODO replace with appropriate layout element
                 TextField error1Message = new TextField();
                 error1Message.setEditable(false);
                 error1Message.setText("Please select an index within the word you enter.");
@@ -135,13 +135,13 @@ public class BurrowsWheelerFastDecoding implements BurrowsWheelerTransformationC
                 error1OK.setText("OK");
                 error1OK.setOnMouseClicked(event -> this.indexOutOfWordErrorWindow.hide());
                 error1Root.getChildren().addAll(error1Message, error1OK);
-                Scene error1Scene = new Scene(error1Root); // TODO size subwindow
+                Scene error1Scene = new Scene(error1Root);
                 this.indexOutOfWordErrorWindow.setTitle("Error");
                 this.indexOutOfWordErrorWindow.setScene(error1Scene);
                 this.indexOutOfWordErrorWindow.initStyle(StageStyle.DECORATED);
                 this.indexOutOfWordErrorWindow.initModality(Modality.NONE);
                 this.indexOutOfWordErrorWindow.initOwner(stage);
-                StackPane error2Root = new StackPane();
+                StackPane error2Root = new StackPane(); // TODO replace with appropriate layout element
                 TextField error2Message = new TextField();
                 error2Message.setEditable(false);
                 error2Message.setText("Please enter a number for the index.");
@@ -149,7 +149,7 @@ public class BurrowsWheelerFastDecoding implements BurrowsWheelerTransformationC
                 error2OK.setText("OK");
                 error2OK.setOnMouseClicked(event -> this.indexNotANumberErrorWindow.hide());
                 error2Root.getChildren().addAll(error2Message, error2OK);
-                Scene error2Scene = new Scene(error2Root); // TODO size subwindow
+                Scene error2Scene = new Scene(error2Root);
                 this.indexNotANumberErrorWindow.setTitle("Error");
                 this.indexNotANumberErrorWindow.setScene(error2Scene);
                 this.indexNotANumberErrorWindow.initStyle(StageStyle.DECORATED);
@@ -177,10 +177,10 @@ public class BurrowsWheelerFastDecoding implements BurrowsWheelerTransformationC
                                 charText.setText(BurrowsWheelerFastDecoding.this.characters.get(currentI).content + "");
                                 charIndex.setText(BurrowsWheelerFastDecoding.this.characters.get(currentI).index + "");
                             });
-                            GridPane.setRowIndex(charText, i);
+                            GridPane.setColumnIndex(charText, i);
                             this.matching.getChildren().add(charText);
-                            GridPane.setRowIndex(charIndex, i);
-                            GridPane.setColumnIndex(charIndex, 1);
+                            GridPane.setColumnIndex(charIndex, i);
+                            GridPane.setRowIndex(charIndex, 1);
                             this.matching.getChildren().add(charIndex);
                         }
                     } catch (NumberFormatException e) {

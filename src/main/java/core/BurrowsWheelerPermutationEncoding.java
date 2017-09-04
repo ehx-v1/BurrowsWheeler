@@ -18,10 +18,13 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Created by root on 14.04.2017.
@@ -84,7 +87,7 @@ public class BurrowsWheelerPermutationEncoding extends BurrowsWheelerStandardEnc
             // TODO display fields for results
 
             { // TODO position children
-                StackPane error3Root = new StackPane();
+                StackPane error3Root = new StackPane(); // TODO replace with appropriate layout element
                 TextField error3Message = new TextField();
                 error3Message.setEditable(false);
                 error3Message.setText("Please enter a word that's shorter than the length limit,\nor change the length limit for your word to fit.");
@@ -93,7 +96,7 @@ public class BurrowsWheelerPermutationEncoding extends BurrowsWheelerStandardEnc
                 error3OK.setText("OK");
                 error3OK.setOnMouseClicked(event -> this.wordLengthExceedsLimitErrorWindow.hide());
                 error3Root.getChildren().addAll(error3Message, error3OK);
-                Scene error3Scene = new Scene(error3Root); // TODO size subwindow
+                Scene error3Scene = new Scene(error3Root);
                 this.wordLengthExceedsLimitErrorWindow.setTitle("Error");
                 this.wordLengthExceedsLimitErrorWindow.setScene(error3Scene);
                 this.wordLengthExceedsLimitErrorWindow.initStyle(StageStyle.DECORATED);
@@ -152,7 +155,7 @@ public class BurrowsWheelerPermutationEncoding extends BurrowsWheelerStandardEnc
                         return this.actualPermutation.get(original);
                     }
                 };
-                StackPane subroot = new StackPane();
+                StackPane subroot = new StackPane(); // TODO replace with appropriate layout element
                 // fill actualPermutationMenu with permutation mapping text fields and a confirm button that sets the permutation mappings
                 TextField[] labelFields = new TextField[26];
                 TextField[] inputFields = new TextField[26];
@@ -160,10 +163,15 @@ public class BurrowsWheelerPermutationEncoding extends BurrowsWheelerStandardEnc
                     labelFields[c - 'a'] = new TextField();
                     labelFields[c - 'a'].setEditable(false);
                     labelFields[c - 'a'].setText(c + "");
+                    GridPane.setRowIndex(labelFields[c - 'a'], c - 'a');
                     inputFields[c - 'a'] = new TextField();
                     inputFields[c - 'a'].setText(c + "");
-                    subroot.getChildren().addAll(labelFields[c - 'a'], inputFields[c - 'a']);
+                    GridPane.setRowIndex(inputFields[c - 'a'], c - 'a');
+                    GridPane.setColumnIndex(inputFields[c - 'a'], 1);
                 }
+                GridPane permutationTable = new GridPane();
+                permutationTable.getChildren().addAll(Stream.concat(Arrays.stream(labelFields), Arrays.stream(inputFields)).collect(Collectors.toList()));
+                subroot.getChildren().add(permutationTable);
                 Button confirmer = new Button();
                 confirmer.setText("OK");
                 confirmer.setOnMouseClicked(event -> {
@@ -173,12 +181,11 @@ public class BurrowsWheelerPermutationEncoding extends BurrowsWheelerStandardEnc
                     this.actualPermutationMenu.hide();
                 });
                 subroot.getChildren().add(confirmer);
-                Scene subscene = new Scene(subroot); // TODO size subwindow
+                Scene subscene = new Scene(subroot);
                 this.actualPermutationMenu.setScene(subscene);
                 this.actualPermutationMenu.initStyle(StageStyle.DECORATED);
                 this.actualPermutationMenu.initModality(Modality.NONE);
                 this.actualPermutationMenu.initOwner(stage);
-                // TODO fill actualPermutationMenu with permutation mapping text fields and a confirm button that sets the permutation mappings
                 // TODO set icon of permutationMenu
                 this.permutationMenu.setTooltip(new Tooltip("Set permutation..."));
                 this.permutationMenu.setOnMouseClicked(event -> this.actualPermutationMenu.show());

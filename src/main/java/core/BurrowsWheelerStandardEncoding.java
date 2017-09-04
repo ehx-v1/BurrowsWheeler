@@ -98,7 +98,7 @@ public class BurrowsWheelerStandardEncoding implements BurrowsWheelerTransformat
             private Stage wordLengthExceedsLimitErrorWindow = new Stage();
 
             { // TODO position children
-                StackPane error3Root = new StackPane();
+                StackPane error3Root = new StackPane(); // TODO replace with appropriate layout element
                 TextField error3Message = new TextField();
                 error3Message.setEditable(false);
                 error3Message.setText("Please enter a word that's shorter than the length limit,\nor change the length limit for your word to fit.");
@@ -107,7 +107,7 @@ public class BurrowsWheelerStandardEncoding implements BurrowsWheelerTransformat
                 error3OK.setText("OK");
                 error3OK.setOnMouseClicked(event -> this.wordLengthExceedsLimitErrorWindow.hide());
                 error3Root.getChildren().addAll(error3Message, error3OK);
-                Scene error3Scene = new Scene(error3Root); // TODO size subwindow
+                Scene error3Scene = new Scene(error3Root);
                 this.wordLengthExceedsLimitErrorWindow.setTitle("Error");
                 this.wordLengthExceedsLimitErrorWindow.setScene(error3Scene);
                 this.wordLengthExceedsLimitErrorWindow.initStyle(StageStyle.DECORATED);
@@ -134,9 +134,8 @@ public class BurrowsWheelerStandardEncoding implements BurrowsWheelerTransformat
 
                                 @Override
                                 public void update(Observable o, Object arg) {
-                                    if (o == observedLine) {
                                         matrixField.setText(observedLine.toString().charAt(currentJ) + "");
-                                    }
+
                                 }
                             });
                             // TODO ensure clean update on sorting

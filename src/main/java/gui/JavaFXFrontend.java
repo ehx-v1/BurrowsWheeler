@@ -1,6 +1,21 @@
 package gui;
 
 import core.BurrowsWheelerTransformationCore;
+import javafx.scene.control.Button;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.RadioMenuItem;
+import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.ToolBar;
+import javafx.scene.control.Tooltip;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import util.ThisShouldNotHappenException;
 import util.runtimeframework.DebugQueue;
 import util.AlgorithmUtils;
 
@@ -20,88 +35,216 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.stage.Modality;
-import javafx.scene.control.Button;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuBar;
-import javafx.scene.control.RadioMenuItem;
-import javafx.scene.control.TextField;
-import javafx.scene.control.ToggleGroup;
-import javafx.scene.control.ToolBar;
-import javafx.scene.control.Tooltip;
 import javafx.scene.layout.StackPane;
 
 /**
  * Created by root on 14.04.2017.
  */
 public class JavaFXFrontend extends Application {
+
+    private enum Message {
+        HEAD_MAIN,
+        HEAD_INFO,
+        HEAD_ERROR,
+        INFO_BEGIN_REACHED,
+        INFO_END_REACHED,
+        INFO_LIMIT_NO_NUMBER,
+        INFO_APPLY_ON_RESTART,
+        TEXTLABEL_MAXLENGTH,
+        TEXTLABEL_LOCALE,
+        TEXTLABEL_GERMAN,
+        TEXTLABEL_ENGLISH,
+        BUTTONLABEL_CONFIRM,
+        BUTTONLABEL_CANCEL,
+        TOOLTIP_FORWARD,
+        TOOLTIP_BACK,
+        MISC_ALGORITHMS,
+        MISC_SETTINGS;
+
+        private String getCaption(JavaFXFrontend origin) {
+            switch (origin.locale) {
+                case DE:
+                    return getCaptionDE();
+                case EN:
+                    return getCaptionEN();
+                default:
+                    throw new ThisShouldNotHappenException("Enum value out of enum");
+            }
+        }
+
+        private String getCaptionDE() {
+            switch (this) {
+                case HEAD_MAIN:
+                    return "Allgemeine Präsentations-GUI für die Burrows-Wheeler-Transformation";
+                case HEAD_INFO:
+                    return "Info";
+                case HEAD_ERROR:
+                    return "Fehler";
+                case INFO_BEGIN_REACHED:
+                    return "Anfang des Algorithmus erreicht!";
+                case INFO_END_REACHED:
+                    return "Ende des Algorithmus erreicht!";
+                case INFO_LIMIT_NO_NUMBER:
+                    return "Bitte für die maximale Wortlänge eine Zahl eingeben.";
+                case INFO_APPLY_ON_RESTART:
+                    return "Das Ändern der maximalen Wortlänge wird bei Neustart übernommen.";
+                case TEXTLABEL_MAXLENGTH:
+                    return "Maximale Wortlänge:";
+                case TEXTLABEL_LOCALE:
+                    return "Sprache:";
+                case TEXTLABEL_GERMAN:
+                    return "Deutsch";
+                case TEXTLABEL_ENGLISH:
+                    return "Englisch/English";
+                case BUTTONLABEL_CONFIRM:
+                    return "OK";
+                case BUTTONLABEL_CANCEL:
+                    return "Abbrechen";
+                case TOOLTIP_FORWARD:
+                    return "Nächster Schritt";
+                case TOOLTIP_BACK:
+                    return "Vorheriger Schritt";
+                case MISC_ALGORITHMS:
+                    return "Algorithmen";
+                case MISC_SETTINGS:
+                    return "Einstellungen";
+                default:
+                    throw new ThisShouldNotHappenException("Enum value out of enum");
+            }
+        }
+
+        private String getCaptionEN() {
+            switch (this) {
+                case HEAD_MAIN:
+                    return "Burrows Wheeler Transformation - Universal Showcase GUI";
+                case HEAD_INFO:
+                    return "Info";
+                case HEAD_ERROR:
+                    return "Error";
+                case INFO_BEGIN_REACHED:
+                    return "Beginning of algorithm reached!";
+                case INFO_END_REACHED:
+                    return "End of algorithm reached!";
+                case INFO_LIMIT_NO_NUMBER:
+                    return "Please enter a number for maximal word length.";
+                case INFO_APPLY_ON_RESTART:
+                    return "Changes to the maximal word length will apply on restart.";
+                case TEXTLABEL_MAXLENGTH:
+                    return "Maximal word length:";
+                case TEXTLABEL_LOCALE:
+                    return "Language:";
+                case TEXTLABEL_GERMAN:
+                    return "German/Deutsch";
+                case TEXTLABEL_ENGLISH:
+                    return "English";
+                case BUTTONLABEL_CONFIRM:
+                    return "OK";
+                case BUTTONLABEL_CANCEL:
+                    return "Cancel";
+                case TOOLTIP_FORWARD:
+                    return "Step forward";
+                case TOOLTIP_BACK:
+                    return "Step back";
+                case MISC_ALGORITHMS:
+                    return "Algorithms";
+                case MISC_SETTINGS:
+                    return "Settings";
+                default:
+                    throw new ThisShouldNotHappenException("Enum value out of enum");
+            }
+        }
+
+    }
+
     private BurrowsWheelerTransformationCore core;
     private List<BurrowsWheelerTransformationCore.AlgorithmImplementationStub> impls;
     private DebugQueue currentQueue;
     private Properties config;
+    private AlgorithmUtils.Locale locale = AlgorithmUtils.Locale.DE;
     public final static String PROPERTY_FILE = "config.properties";
+    public final static String MAXLENGTH_PROPERTY = "maxLength";
+    public final static String LOCALE_PROPERTY = "locale";
 
     @Override
-    public void start(Stage primaryStage) throws Exception { // TODO position children
+    public void start(Stage primaryStage) throws Exception {
         this.config = new Properties();
-        StackPane root = new StackPane();
+        this.locale = this.readLocaleFromConfig();
+        BorderPane root = new BorderPane(); // TODO replace with appropriate layout element
         Stage popup1Stage = new Stage();
         Stage popup2Stage = new Stage();
         Stage settingsStage = new Stage();
         Stage errorStage = new Stage();
-        StackPane subroot1 = new StackPane();
+        StackPane subroot1 = new StackPane(); // TODO replace with appropriate layout element
         TextField message1 = new TextField();
         message1.setEditable(false);
-        message1.setText("Beginning of algorithm reached!");
+        message1.setText(Message.INFO_BEGIN_REACHED.getCaption(this));
         Button confirm1 = new Button();
         confirm1.setDefaultButton(true);
-        confirm1.setText("OK");
+        confirm1.setText(Message.BUTTONLABEL_CONFIRM.getCaption(this));
         confirm1.setOnMouseClicked(event -> popup1Stage.hide());
         subroot1.getChildren().addAll(message1, confirm1);
-        Scene popup1Scene = new Scene(subroot1); // TODO size subwindow
-        popup1Stage.setTitle("Info");
+        Scene popup1Scene = new Scene(subroot1);
+        popup1Stage.setTitle(Message.HEAD_INFO.getCaption(this));
         popup1Stage.setScene(popup1Scene);
         popup1Stage.initStyle(StageStyle.DECORATED);
         popup1Stage.initModality(Modality.NONE);
         popup1Stage.initOwner(primaryStage);
-        StackPane subroot2 = new StackPane();
+        StackPane subroot2 = new StackPane(); // TODO replace with appropriate layout element
         TextField message2 = new TextField();
         message2.setEditable(false);
-        message2.setText("End of algorithm reached!");
+        message2.setText(Message.INFO_END_REACHED.getCaption(this));
         Button confirm2 = new Button();
         confirm2.setDefaultButton(true);
-        confirm2.setText("OK");
+        confirm2.setText(Message.BUTTONLABEL_CONFIRM.getCaption(this));
         confirm2.setOnMouseClicked(event -> popup2Stage.hide());
         subroot2.getChildren().addAll(message2, confirm2);
-        Scene popup2Scene = new Scene(subroot2); // TODO size subwindow
-        popup2Stage.setTitle("Info");
+        Scene popup2Scene = new Scene(subroot2);
+        popup2Stage.setTitle(Message.HEAD_INFO.getCaption(this));
         popup2Stage.setScene(popup2Scene);
         popup2Stage.initStyle(StageStyle.DECORATED);
         popup2Stage.initModality(Modality.NONE);
         popup2Stage.initOwner(primaryStage);
-        StackPane subroot3 = new StackPane();
+        StackPane subroot3 = new StackPane(); // TODO replace with appropriate layout element
         TextField errorMessage = new TextField();
         errorMessage.setEditable(false);
-        errorMessage.setText("Please enter a number for mximal word length.");
+        errorMessage.setText(Message.INFO_LIMIT_NO_NUMBER.getCaption(this));
         Button confirm3 = new Button();
         confirm3.setDefaultButton(true);
-        confirm3.setText("OK");
+        confirm3.setText(Message.BUTTONLABEL_CONFIRM.getCaption(this));
         confirm3.setOnMouseClicked(event -> errorStage.hide());
         subroot3.getChildren().addAll(errorMessage, confirm3);
         Scene errorScene = new Scene(subroot3);
-        errorStage.setTitle("Error"); // TODO size subwindow
+        errorStage.setTitle(Message.HEAD_ERROR.getCaption(this));
         errorStage.setScene(errorScene);
         errorStage.initStyle(StageStyle.DECORATED);
         errorStage.initModality(Modality.APPLICATION_MODAL);
         errorStage.initOwner(primaryStage);
-        StackPane subroot4 = new StackPane();
+        GridPane subroot4 = new GridPane();
         TextField limitSettingLabel = new TextField();
         limitSettingLabel.setEditable(false);
-        limitSettingLabel.setText("Maximal word length:");
+        limitSettingLabel.setText(Message.TEXTLABEL_MAXLENGTH.getCaption(this));
         TextField limitSettingInput = new TextField();
         limitSettingInput.setText(this.readMaxLengthFromConfig() + "");
+        GridPane.setColumnIndex(limitSettingInput, 1);
+        TextField localeSettingLabel = new TextField();
+        localeSettingLabel.setText(Message.TEXTLABEL_LOCALE.getCaption(this));
+        GridPane.setRowIndex(localeSettingLabel, 1);
+        ToggleGroup localeGroup = new ToggleGroup();
+        RadioButton de = new RadioButton();
+        de.setSelected(this.locale == AlgorithmUtils.Locale.DE);
+        de.setText(Message.TEXTLABEL_GERMAN.getCaption(this));
+        de.setToggleGroup(localeGroup);
+        RadioButton en = new RadioButton();
+        en.setSelected(this.locale == AlgorithmUtils.Locale.EN);
+        en.setText(Message.TEXTLABEL_ENGLISH.getCaption(this));
+        en.setToggleGroup(localeGroup);
+        HBox radioButtonFrame = new HBox();
+        radioButtonFrame.getChildren().addAll(de, en);
+        GridPane.setRowIndex(radioButtonFrame, 1);
+        GridPane.setColumnIndex(radioButtonFrame, 1);
         Button confirmSettings = new Button();
         confirmSettings.setDefaultButton(true);
-        confirmSettings.setText("OK");
+        confirmSettings.setText(Message.BUTTONLABEL_CONFIRM.getCaption(this));
         confirmSettings.setOnMouseClicked(event -> {
             /*
             workaround for replacing
@@ -118,23 +261,28 @@ public class JavaFXFrontend extends Application {
                 return;
             }
             try (OutputStream stream = this.initFileAndMakeStream()){
-                this.config.setProperty("maxLength", limitSettingInput.getText());
+                this.config.setProperty(MAXLENGTH_PROPERTY, limitSettingInput.getText());
+                this.config.setProperty(LOCALE_PROPERTY, de.isSelected() ? AlgorithmUtils.Locale.DE.name() : AlgorithmUtils.Locale.EN.name());
                 this.config.store(stream, null);
             } catch (IOException e) {
                 System.err.println("Warning: File \"" + PROPERTY_FILE + "\" cannot be written");
             }
+            // TODO read config and apply changes
             settingsStage.hide();
         });
+        GridPane.setRowIndex(confirmSettings, 2);
         Button cancelSettings = new Button();
         cancelSettings.setCancelButton(true);
-        cancelSettings.setText("Cancel");
+        cancelSettings.setText(Message.BUTTONLABEL_CANCEL.getCaption(this));
         cancelSettings.setOnMouseClicked(event -> {
             limitSettingInput.setText(this.readMaxLengthFromConfig() + "");
             settingsStage.hide();
         });
-        subroot4.getChildren().addAll(limitSettingLabel, limitSettingInput, confirmSettings);
-        Scene settingsScene = new Scene(subroot4); // TODO size subwindow
-        settingsStage.setTitle("Settings");
+        GridPane.setRowIndex(cancelSettings, 2);
+        GridPane.setColumnIndex(cancelSettings, 1);
+        subroot4.getChildren().addAll(limitSettingLabel, limitSettingInput, radioButtonFrame, confirmSettings, cancelSettings);
+        Scene settingsScene = new Scene(subroot4);
+        settingsStage.setTitle(Message.MISC_SETTINGS.getCaption(this));
         settingsStage.setScene(settingsScene);
         settingsStage.initStyle(StageStyle.DECORATED);
         settingsStage.initModality(Modality.NONE);
@@ -142,13 +290,14 @@ public class JavaFXFrontend extends Application {
         ToolBar top = new ToolBar();
         MenuBar menu = new MenuBar();
         Menu actualMenu = new Menu();
+        actualMenu.setText(Message.MISC_ALGORITHMS.getCaption(this));
         menu.getMenus().add(actualMenu);
         ToggleGroup menuGroup = new ToggleGroup();
         this.core = new BurrowsWheelerTransformationCore(this.readMaxLengthFromConfig());
         this.impls = new ArrayList<>();
         ViewerPaneContainer paneContainer = new ViewerPaneContainer();
         for (BurrowsWheelerTransformationCore.Algorithms algorithm : BurrowsWheelerTransformationCore.Algorithms.values()) {
-            RadioMenuItem item = new RadioMenuItem(AlgorithmUtils.algorithmCaption(algorithm));
+            RadioMenuItem item = new RadioMenuItem(AlgorithmUtils.algorithmCaption(algorithm, this.locale));
             item.setToggleGroup(menuGroup);
             this.impls.add(AlgorithmUtils.createAlgorithm(this.core, algorithm, popup1Stage::show, popup2Stage::show));
             actualMenu.getItems().add(item);
@@ -158,26 +307,26 @@ public class JavaFXFrontend extends Application {
                 this.currentQueue = this.core.getRegisteredAlgorithm(algorithm);
             });
         }
-        root.getChildren().add(paneContainer);
+        root.setCenter(paneContainer);
         top.getItems().add(menu);
         Button back = new Button();
-        back.setTooltip(new Tooltip("Step back"));
-        // TODO set icon for back
+        back.setTooltip(new Tooltip(Message.TOOLTIP_BACK.getCaption(this)));
+        back.setGraphic(new ImageView(new Image("assets/back.png")));
         back.setOnMouseClicked(event -> this.currentQueue.stepBack());
         top.getItems().add(back);
         Button forward = new Button();
-        forward.setTooltip(new Tooltip("Step forward"));
-        // TODO set icon for forward
+        forward.setTooltip(new Tooltip(Message.TOOLTIP_FORWARD.getCaption(this)));
+        forward.setGraphic(new ImageView(new Image("assets/forward.png")));
         forward.setOnMouseClicked(event -> this.currentQueue.stepForward());
         top.getItems().add(forward);
         Button settings = new Button();
-        settings.setTooltip(new Tooltip("Settings"));
-        // TODO set icon for settings
+        settings.setTooltip(new Tooltip(Message.MISC_SETTINGS.getCaption(this)));
+        settings.setGraphic(new ImageView(new Image("assets/settings.png")));
         settings.setOnMouseClicked(event -> settingsStage.show());
         top.getItems().add(settings);
-        root.getChildren().add(top);
+        root.setTop(top);
         Scene mainWindow = new Scene(root, Math.max(top.getWidth(), paneContainer.getLayoutX()), top.getHeight() + paneContainer.getLayoutY());
-        primaryStage.setTitle("Burrows Wheeler Transformation - Universal GUI");
+        primaryStage.setTitle(Message.HEAD_MAIN.getCaption(this));
         primaryStage.setScene(mainWindow);
         primaryStage.show();
     }
@@ -185,14 +334,28 @@ public class JavaFXFrontend extends Application {
     private int readMaxLengthFromConfig() {
         try (InputStream input = new FileInputStream(new File(PROPERTY_FILE))) {
             this.config.load(input);
-            String maxLength = this.config.getProperty("maxLength");
+            String maxLength = this.config.getProperty(MAXLENGTH_PROPERTY);
             return Integer.parseInt(maxLength);
         } catch (IOException e) {
             System.err.println("Warning: File \"" + PROPERTY_FILE + "\" cannot be read\nUsing default maximal length 20...");
             return 20;
         } catch (NumberFormatException e) {
-            System.err.println("Warning: File \"" + PROPERTY_FILE + "\" is invalid\nProperty \"maxLength\" is no int\nUsing default maximal length 20...");
+            System.err.println("Warning: File \"" + PROPERTY_FILE + "\" is invalid\nProperty \"" + MAXLENGTH_PROPERTY + "\" is no int\nUsing default maximal length 20...");
             return 20;
+        }
+    }
+
+    private AlgorithmUtils.Locale readLocaleFromConfig() {
+        try (InputStream input = new FileInputStream(new File(PROPERTY_FILE))) {
+            this.config.load(input);
+            String locale = this.config.getProperty(LOCALE_PROPERTY);
+            return AlgorithmUtils.Locale.valueOf(locale);
+        } catch (IOException e) {
+            System.err.println("Warning: File \"" + PROPERTY_FILE + "\" cannot be read\nUsing default German locale...");
+            return AlgorithmUtils.Locale.DE;
+        } catch (IllegalArgumentException e) {
+            System.err.println("Warning: File \"" + PROPERTY_FILE + "\" is invalid\nProperty \"" + LOCALE_PROPERTY + "\" is no supported locale code\nUsing default German locale...");
+            return AlgorithmUtils.Locale.DE;
         }
     }
 

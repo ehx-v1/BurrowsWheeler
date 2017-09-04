@@ -13,6 +13,11 @@ import core.BurrowsWheelerTransformationCore;
  */
 public class AlgorithmUtils {
 
+    public enum Locale {
+        DE,
+        EN
+    }
+
     public static BurrowsWheelerTransformationCore.AlgorithmImplementationStub createAlgorithm (BurrowsWheelerTransformationCore core, BurrowsWheelerTransformationCore.Algorithms algorithm, Runnable onPreBegin, Runnable onPostEnd) {
         switch (algorithm) {
             case BW_STANDARD_ENCODE:
@@ -32,7 +37,41 @@ public class AlgorithmUtils {
         }
     }
 
-    public static String algorithmCaption (BurrowsWheelerTransformationCore.Algorithms algorithm) {
+    public static String algorithmCaption (BurrowsWheelerTransformationCore.Algorithms algorithm) { // TODO remove legacy default method when no longer in use
+        return algorithmCaption(algorithm, Locale.DE);
+    }
+
+    public static String algorithmCaption (BurrowsWheelerTransformationCore.Algorithms algorithm, Locale locale) {
+        switch (locale) {
+            case DE:
+                return algorithmCaptionDE(algorithm);
+            case EN:
+                return algorithmCaptionEN(algorithm);
+            default:
+                throw new ThisShouldNotHappenException("Enum value not in enum");
+        }
+    }
+
+    public static String algorithmCaptionEN (BurrowsWheelerTransformationCore.Algorithms algorithm) {
+        switch (algorithm) {
+            case BW_STANDARD_ENCODE:
+                return "Forward-side standard transformation";
+            case BW_STANDARD_DECODE_SHOWGENERALIDEAS:
+                return "General backward-side concepts";
+            case BW_STANDARD_DECODE_FAST:
+                return "More performant backward-side standard transformation";
+            case BW_STANDARD_DECODE_INTUITIVE:
+                return "More simple backward-side standard transformation";
+            case BW_PERMUTATIONS_ENCODE:
+                return "Forward-side permutational transformation";
+            case BW_PERMUTATIONS_DECODE:
+                return "Backward-side permutational transformation";
+            default:
+                throw new ThisShouldNotHappenException("Enum value not in enum");
+        }
+    }
+
+    public static String algorithmCaptionDE (BurrowsWheelerTransformationCore.Algorithms algorithm) {
         switch (algorithm) {
             case BW_STANDARD_ENCODE:
                 return "Vorwärtstransformation";
