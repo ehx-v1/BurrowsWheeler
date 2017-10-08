@@ -1,41 +1,95 @@
 package core;
 
 import gui.ViewerPane;
-import util.runtimeframework.DebugQueue;
-import util.runtimeframework.DebugStep;
-
-import javafx.stage.Stage;
-import javafx.stage.Modality;
-import javafx.stage.StageStyle;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.GridPane;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.geometry.Pos;
+import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
+import util.AlgorithmUtils;
+import util.ThisShouldNotHappenException;
+import util.runtimeframework.DebugQueue;
+import util.runtimeframework.DebugStep;
 
-import java.util.Arrays;
-import java.util.Observable;
-import java.util.Observer;
+import java.util.*;
 
 /**
  * Created by root on 14.04.2017.
  */
-public class BurrowsWheelerStandardEncoding implements BurrowsWheelerTransformationCore.AlgorithmImplementationStub {
+public class BurrowsWheelerStandardEncoding extends Observable implements BurrowsWheelerTransformationCore.AlgorithmImplementationStub {
+
+    private enum Message {
+        HEAD_ERROR,
+        BUTTONLABEL_CONFIRM,
+        BUTTONLABEL_LAUNCH,
+        ERROR_LENGTH_EXCEEDS_LIMIT;
+
+        private String getCaption (AlgorithmUtils.Locale locale) {
+            switch (locale) {
+                case DE:
+                    return this.getCaptionDE();
+                case EN:
+                    return this.getCaptionEN();
+                default:
+                    throw new ThisShouldNotHappenException("Enum value out of enum");
+            }
+        }
+
+        private String getCaptionDE() {
+            switch (this) {
+                case HEAD_ERROR:
+                    return "Fehler";
+                case BUTTONLABEL_CONFIRM:
+                    return "OK";
+                case BUTTONLABEL_LAUNCH:
+                    return "Starten";
+                case ERROR_LENGTH_EXCEEDS_LIMIT:
+                    return "Bitte ein Wort eingeben, das kürzer als die Maximallänge ist,\noder die Maximallänge an das gewünschte Wort anpassen.";
+                default:
+                    throw new ThisShouldNotHappenException("Enum value out of enum");
+            }
+        }
+
+        private String getCaptionEN() {
+            switch (this) {
+                case HEAD_ERROR:
+                    return "Error";
+                case BUTTONLABEL_CONFIRM:
+                    return "OK";
+                case BUTTONLABEL_LAUNCH:
+                    return "Launch";
+                case ERROR_LENGTH_EXCEEDS_LIMIT:
+                    return "Please enter a word that's shorter than the length limit,\nor change the length limit for your word to fit.";
+                default:
+                    throw new ThisShouldNotHappenException("Enum value out of enum");
+            }
+        }
+    }
+
     protected String input;
     protected BurrowsWheelerTransformationCore.BurrowsWheelerTableLine[] inputTable;
     protected int filledLines;
     protected int inputLimit;
+    protected AlgorithmUtils.Locale locale;
 
-    public BurrowsWheelerStandardEncoding(BurrowsWheelerTransformationCore core, Runnable onPreBegin, Runnable onPostEnd) {
+    public BurrowsWheelerStandardEncoding(BurrowsWheelerTransformationCore core, Runnable onPreBegin, Runnable onPostEnd, AlgorithmUtils.Locale locale) {
         this.inputLimit = core.getMaxInputLength();
         this.input = "";
         this.inputTable = null;
         this.filledLines = 0;
+        this.locale = locale;
         core.addImplementation(this, onPreBegin, onPostEnd);
+    }
+
+    public BurrowsWheelerStandardEncoding(BurrowsWheelerTransformationCore core, Runnable onPreBegin, Runnable onPostEnd) {
+        this(core, onPreBegin, onPostEnd, AlgorithmUtils.Locale.DE);
     }
 
     protected void launch( String input) {
@@ -91,29 +145,30 @@ public class BurrowsWheelerStandardEncoding implements BurrowsWheelerTransformat
 
     @Override
     public ViewerPane getViewer(Stage stage) {
-        return new ViewerPane() {
+        ViewerPane pane = new ViewerPane() {
             private TextField inputField = new TextField();
             private Button launcher = new Button();
             private GridPane table = new GridPane();
             private Stage wordLengthExceedsLimitErrorWindow = new Stage();
+            private List<UpdateLinker> linkers = new ArrayList<>();
 
-            { // TODO position children
-                StackPane error3Root = new StackPane(); // TODO replace with appropriate layout element
+            { // TODO position children?
+                VBox error3Root = new VBox();
                 TextField error3Message = new TextField();
                 error3Message.setEditable(false);
-                error3Message.setText("Please enter a word that's shorter than the length limit,\nor change the length limit for your word to fit.");
+                error3Message.setText(Message.ERROR_LENGTH_EXCEEDS_LIMIT.getCaption(BurrowsWheelerStandardEncoding.this.locale));
                 error3Message.setAlignment(Pos.TOP_CENTER);
                 Button error3OK = new Button();
-                error3OK.setText("OK");
+                error3OK.setText(Message.BUTTONLABEL_CONFIRM.getCaption(BurrowsWheelerStandardEncoding.this.locale));
                 error3OK.setOnMouseClicked(event -> this.wordLengthExceedsLimitErrorWindow.hide());
                 error3Root.getChildren().addAll(error3Message, error3OK);
                 Scene error3Scene = new Scene(error3Root);
-                this.wordLengthExceedsLimitErrorWindow.setTitle("Error");
+                this.wordLengthExceedsLimitErrorWindow.setTitle(Message.HEAD_ERROR.getCaption(BurrowsWheelerStandardEncoding.this.locale));
                 this.wordLengthExceedsLimitErrorWindow.setScene(error3Scene);
                 this.wordLengthExceedsLimitErrorWindow.initStyle(StageStyle.DECORATED);
                 this.wordLengthExceedsLimitErrorWindow.initModality(Modality.NONE);
                 this.wordLengthExceedsLimitErrorWindow.initOwner(stage);
-                this.launcher.setText("Launch");
+                this.launcher.setText(Message.BUTTONLABEL_LAUNCH.getCaption(BurrowsWheelerStandardEncoding.this.locale));
                 this.launcher.setOnAction(event -> {
                     if (this.inputField.getText().length() > BurrowsWheelerStandardEncoding.this.inputLimit) {
                         this.wordLengthExceedsLimitErrorWindow.show();
@@ -138,7 +193,13 @@ public class BurrowsWheelerStandardEncoding implements BurrowsWheelerTransformat
 
                                 }
                             });
-                            // TODO ensure clean update on sorting
+                            this.linkers.add(() -> {
+                                ObservableList<Node> matrix = this.table.getChildren();
+                                for (int i1 = 0; i1 < matrix.size(); i1++) {
+                                    ((TextField) matrix.get(i1)).setText(BurrowsWheelerStandardEncoding.this.inputTable[i1].toString());
+                                }
+                                this.layout();
+                            });
                             GridPane.setRowIndex(matrixField, i);
                             GridPane.setColumnIndex(matrixField, j);
                             this.table.getChildren().add(matrixField);
@@ -148,14 +209,30 @@ public class BurrowsWheelerStandardEncoding implements BurrowsWheelerTransformat
             }
 
             @Override
-            protected ObservableList<Node> getChildren() {
+            public void update(Observable o, Object arg) {
+                if (o == BurrowsWheelerStandardEncoding.this) {
+                    for (UpdateLinker linker : this.linkers) {
+                        linker.adjustContent();
+                    }
+                }
+            }
+
+            @Override
+            public boolean isAssociatedWith (BurrowsWheelerTransformationCore.Algorithms algorithm) {
+                return algorithm == BurrowsWheelerTransformationCore.Algorithms.BW_STANDARD_ENCODE;
+            }
+
+            @Override
+            public ObservableList<Node> getChildren() {
                 ObservableList<Node> nodes = FXCollections.observableArrayList();
                 nodes.add(this.inputField);
                 nodes.add(this.launcher);
                 nodes.add(this.table);
-                return nodes;
+                return FXCollections.unmodifiableObservableList(nodes);
             }
         };
+        this.addObserver(pane);
+        return pane;
     }
 
 }

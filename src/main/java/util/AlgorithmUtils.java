@@ -37,10 +37,6 @@ public class AlgorithmUtils {
         }
     }
 
-    public static String algorithmCaption (BurrowsWheelerTransformationCore.Algorithms algorithm) { // TODO remove legacy default method when no longer in use
-        return algorithmCaption(algorithm, Locale.DE);
-    }
-
     public static String algorithmCaption (BurrowsWheelerTransformationCore.Algorithms algorithm, Locale locale) {
         switch (locale) {
             case DE:

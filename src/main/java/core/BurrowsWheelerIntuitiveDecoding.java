@@ -1,6 +1,7 @@
 package core;
 
 import gui.ViewerPane;
+import javafx.scene.layout.HBox;
 import util.runtimeframework.DebugQueue;
 import util.runtimeframework.DebugStep;
 
@@ -17,14 +18,12 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
 
-import java.util.Arrays;
-import java.util.Observable;
-import java.util.Observer;
+import java.util.*;
 
 /**
  * Created by root on 14.04.2017.
  */
-public class BurrowsWheelerIntuitiveDecoding implements BurrowsWheelerTransformationCore.AlgorithmImplementationStub {
+public class BurrowsWheelerIntuitiveDecoding extends Observable implements BurrowsWheelerTransformationCore.AlgorithmImplementationStub {
     protected String input;
     protected int inputLimit;
     protected BurrowsWheelerTransformationCore.BurrowsWheelerTableLine[] inputTable;
@@ -67,9 +66,7 @@ public class BurrowsWheelerIntuitiveDecoding implements BurrowsWheelerTransforma
         if (this.stepCount < this.input.length()) {
             for (BurrowsWheelerTransformationCore.BurrowsWheelerTableLine inputLine : this.inputTable) {
                 inputLine.rotateRight();
-                System.out.println(inputLine);
             }
-            System.out.println();
         }
         this.stepCount++;
     }
@@ -86,10 +83,8 @@ public class BurrowsWheelerIntuitiveDecoding implements BurrowsWheelerTransforma
     protected void sort() {
         // should be immutable at iterations beyond the end
         Arrays.sort(inputTable, BurrowsWheelerTransformationCore.BurrowsWheelerTableLine.sortingComparator());
-        for (BurrowsWheelerTransformationCore.BurrowsWheelerTableLine inputLine : this.inputTable) {
-            System.out.println(inputLine);
-        }
-        System.out.println();
+        this.setChanged();
+        this.notifyObservers();
     }
 
     protected void revertSort() {
@@ -99,6 +94,8 @@ public class BurrowsWheelerIntuitiveDecoding implements BurrowsWheelerTransforma
                 inputTable[0].isSecondSlotFilled() ?
                         BurrowsWheelerTransformationCore.BurrowsWheelerTableLine.sortingRevertComparator()
                         : BurrowsWheelerTransformationCore.BurrowsWheelerTableLine.firstSortingRevertComparator());
+        this.setChanged();
+        this.notifyObservers();
     }
 
     @Override
@@ -122,7 +119,7 @@ public class BurrowsWheelerIntuitiveDecoding implements BurrowsWheelerTransforma
 
     @Override
     public ViewerPane getViewer(Stage stage) {
-        return new ViewerPane() {
+        ViewerPane pane = new ViewerPane() {
             private TextField inputField = new TextField();
             private TextField indexField = new TextField();
             private Button launcher = new Button();
@@ -131,6 +128,7 @@ public class BurrowsWheelerIntuitiveDecoding implements BurrowsWheelerTransforma
             private Stage indexOutOfWordErrorWindow = new Stage();
             private Stage indexNotANumberErrorWindow = new Stage();
             private Stage wordLengthExceedsLimitErrorWindow = new Stage();
+            private List<UpdateLinker> linkers = new ArrayList<>();
 
             { // TODO position children
                 StackPane error1Root = new StackPane(); // TODO replace with appropriate layout element
@@ -198,6 +196,7 @@ public class BurrowsWheelerIntuitiveDecoding implements BurrowsWheelerTransforma
                                 matrixField.setEditable(false);
                                 matrixField.setText(BurrowsWheelerIntuitiveDecoding.this.inputTable[i].toString());
                                 // make sure the text of matrixField updates to this.inputTable[i].toString().charAt(j) whenever inputTable changes
+                                ViewerPane origin = this;
                                 BurrowsWheelerIntuitiveDecoding.this.inputTable[i].addObserver(new Observer() {
                                     private BurrowsWheelerTransformationCore.BurrowsWheelerTableLine observedLine = BurrowsWheelerIntuitiveDecoding.this.inputTable[currentI];
 
@@ -206,9 +205,16 @@ public class BurrowsWheelerIntuitiveDecoding implements BurrowsWheelerTransforma
                                         if (o == observedLine) {
                                             matrixField.setText(observedLine.toString().charAt(currentJ) + "");
                                         }
+                                        origin.layout();
                                     }
                                 });
-                                // TODO ensure clean update on sorting
+                                this.linkers.add(() -> {
+                                    ObservableList<Node> matrix = this.table.getChildren();
+                                    for (int i1 = 0; i1 < matrix.size(); i1++) {
+                                        ((TextField) matrix.get(i1)).setText(BurrowsWheelerIntuitiveDecoding.this.inputTable[i1].toString());
+                                    }
+                                    this.layout();
+                                });
                                 GridPane.setRowIndex(matrixField, i);
                                 GridPane.setColumnIndex(matrixField, j);
                                 this.table.getChildren().add(matrixField);
@@ -222,15 +228,33 @@ public class BurrowsWheelerIntuitiveDecoding implements BurrowsWheelerTransforma
             }
 
             @Override
-            protected ObservableList<Node> getChildren() {
+            public void update(Observable o, Object arg) {
+                if (o == BurrowsWheelerIntuitiveDecoding.this) {
+                    for (UpdateLinker linker : this.linkers) {
+                        linker.adjustContent();
+                    }
+                }
+            }
+
+            @Override
+            public boolean isAssociatedWith (BurrowsWheelerTransformationCore.Algorithms algorithm) {
+                return algorithm == BurrowsWheelerTransformationCore.Algorithms.BW_STANDARD_DECODE_INTUITIVE;
+            }
+
+            @Override
+            public ObservableList<Node> getChildren() {
                 ObservableList<Node> nodes = FXCollections.observableArrayList();
-                nodes.add(this.inputField);
-                nodes.add(this.indexField);
-                nodes.add(this.launcher);
+                HBox topLine = new HBox();
+                topLine.getChildren().add(this.inputField);
+                topLine.getChildren().add(this.indexField);
+                topLine.getChildren().add(this.launcher);
+                nodes.add(topLine);
                 nodes.add(this.table);
-                return nodes;
+                return FXCollections.unmodifiableObservableList(nodes);
             }
         };
+        this.addObserver(pane);
+        return pane;
     }
 
 }

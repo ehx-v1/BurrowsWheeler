@@ -1,15 +1,8 @@
 package gui;
 
 import core.BurrowsWheelerTransformationCore;
-import javafx.scene.control.Button;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuBar;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.RadioMenuItem;
-import javafx.scene.control.TextField;
-import javafx.scene.control.ToggleGroup;
-import javafx.scene.control.ToolBar;
-import javafx.scene.control.Tooltip;
+import javafx.scene.Node;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
@@ -61,8 +54,8 @@ public class JavaFXFrontend extends Application {
         MISC_ALGORITHMS,
         MISC_SETTINGS;
 
-        private String getCaption(JavaFXFrontend origin) {
-            switch (origin.locale) {
+        private String getCaption(AlgorithmUtils.Locale locale) {
+            switch (locale) {
                 case DE:
                     return getCaptionDE();
                 case EN:
@@ -160,7 +153,6 @@ public class JavaFXFrontend extends Application {
     private List<BurrowsWheelerTransformationCore.AlgorithmImplementationStub> impls;
     private DebugQueue currentQueue;
     private Properties config;
-    private AlgorithmUtils.Locale locale = AlgorithmUtils.Locale.DE;
     public final static String PROPERTY_FILE = "config.properties";
     public final static String MAXLENGTH_PROPERTY = "maxLength";
     public final static String LOCALE_PROPERTY = "locale";
@@ -168,8 +160,8 @@ public class JavaFXFrontend extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         this.config = new Properties();
-        this.locale = this.readLocaleFromConfig();
-        BorderPane root = new BorderPane(); // TODO replace with appropriate layout element
+        AlgorithmUtils.Locale locale = this.readLocaleFromConfig();
+        BorderPane root = new BorderPane();
         Stage popup1Stage = new Stage();
         Stage popup2Stage = new Stage();
         Stage settingsStage = new Stage();
@@ -177,14 +169,14 @@ public class JavaFXFrontend extends Application {
         StackPane subroot1 = new StackPane(); // TODO replace with appropriate layout element
         TextField message1 = new TextField();
         message1.setEditable(false);
-        message1.setText(Message.INFO_BEGIN_REACHED.getCaption(this));
+        message1.setText(Message.INFO_BEGIN_REACHED.getCaption(locale));
         Button confirm1 = new Button();
         confirm1.setDefaultButton(true);
-        confirm1.setText(Message.BUTTONLABEL_CONFIRM.getCaption(this));
+        confirm1.setText(Message.BUTTONLABEL_CONFIRM.getCaption(locale));
         confirm1.setOnMouseClicked(event -> popup1Stage.hide());
         subroot1.getChildren().addAll(message1, confirm1);
         Scene popup1Scene = new Scene(subroot1);
-        popup1Stage.setTitle(Message.HEAD_INFO.getCaption(this));
+        popup1Stage.setTitle(Message.HEAD_INFO.getCaption(locale));
         popup1Stage.setScene(popup1Scene);
         popup1Stage.initStyle(StageStyle.DECORATED);
         popup1Stage.initModality(Modality.NONE);
@@ -192,14 +184,14 @@ public class JavaFXFrontend extends Application {
         StackPane subroot2 = new StackPane(); // TODO replace with appropriate layout element
         TextField message2 = new TextField();
         message2.setEditable(false);
-        message2.setText(Message.INFO_END_REACHED.getCaption(this));
+        message2.setText(Message.INFO_END_REACHED.getCaption(locale));
         Button confirm2 = new Button();
         confirm2.setDefaultButton(true);
-        confirm2.setText(Message.BUTTONLABEL_CONFIRM.getCaption(this));
+        confirm2.setText(Message.BUTTONLABEL_CONFIRM.getCaption(locale));
         confirm2.setOnMouseClicked(event -> popup2Stage.hide());
         subroot2.getChildren().addAll(message2, confirm2);
         Scene popup2Scene = new Scene(subroot2);
-        popup2Stage.setTitle(Message.HEAD_INFO.getCaption(this));
+        popup2Stage.setTitle(Message.HEAD_INFO.getCaption(locale));
         popup2Stage.setScene(popup2Scene);
         popup2Stage.initStyle(StageStyle.DECORATED);
         popup2Stage.initModality(Modality.NONE);
@@ -207,14 +199,14 @@ public class JavaFXFrontend extends Application {
         StackPane subroot3 = new StackPane(); // TODO replace with appropriate layout element
         TextField errorMessage = new TextField();
         errorMessage.setEditable(false);
-        errorMessage.setText(Message.INFO_LIMIT_NO_NUMBER.getCaption(this));
+        errorMessage.setText(Message.INFO_LIMIT_NO_NUMBER.getCaption(locale));
         Button confirm3 = new Button();
         confirm3.setDefaultButton(true);
-        confirm3.setText(Message.BUTTONLABEL_CONFIRM.getCaption(this));
+        confirm3.setText(Message.BUTTONLABEL_CONFIRM.getCaption(locale));
         confirm3.setOnMouseClicked(event -> errorStage.hide());
         subroot3.getChildren().addAll(errorMessage, confirm3);
         Scene errorScene = new Scene(subroot3);
-        errorStage.setTitle(Message.HEAD_ERROR.getCaption(this));
+        errorStage.setTitle(Message.HEAD_ERROR.getCaption(locale));
         errorStage.setScene(errorScene);
         errorStage.initStyle(StageStyle.DECORATED);
         errorStage.initModality(Modality.APPLICATION_MODAL);
@@ -222,21 +214,21 @@ public class JavaFXFrontend extends Application {
         GridPane subroot4 = new GridPane();
         TextField limitSettingLabel = new TextField();
         limitSettingLabel.setEditable(false);
-        limitSettingLabel.setText(Message.TEXTLABEL_MAXLENGTH.getCaption(this));
+        limitSettingLabel.setText(Message.TEXTLABEL_MAXLENGTH.getCaption(locale));
         TextField limitSettingInput = new TextField();
         limitSettingInput.setText(this.readMaxLengthFromConfig() + "");
         GridPane.setColumnIndex(limitSettingInput, 1);
         TextField localeSettingLabel = new TextField();
-        localeSettingLabel.setText(Message.TEXTLABEL_LOCALE.getCaption(this));
+        localeSettingLabel.setText(Message.TEXTLABEL_LOCALE.getCaption(locale));
         GridPane.setRowIndex(localeSettingLabel, 1);
         ToggleGroup localeGroup = new ToggleGroup();
         RadioButton de = new RadioButton();
-        de.setSelected(this.locale == AlgorithmUtils.Locale.DE);
-        de.setText(Message.TEXTLABEL_GERMAN.getCaption(this));
+        de.setSelected(locale == AlgorithmUtils.Locale.DE);
+        de.setText(Message.TEXTLABEL_GERMAN.getCaption(locale));
         de.setToggleGroup(localeGroup);
         RadioButton en = new RadioButton();
-        en.setSelected(this.locale == AlgorithmUtils.Locale.EN);
-        en.setText(Message.TEXTLABEL_ENGLISH.getCaption(this));
+        en.setSelected(locale == AlgorithmUtils.Locale.EN);
+        en.setText(Message.TEXTLABEL_ENGLISH.getCaption(locale));
         en.setToggleGroup(localeGroup);
         HBox radioButtonFrame = new HBox();
         radioButtonFrame.getChildren().addAll(de, en);
@@ -244,7 +236,7 @@ public class JavaFXFrontend extends Application {
         GridPane.setColumnIndex(radioButtonFrame, 1);
         Button confirmSettings = new Button();
         confirmSettings.setDefaultButton(true);
-        confirmSettings.setText(Message.BUTTONLABEL_CONFIRM.getCaption(this));
+        confirmSettings.setText(Message.BUTTONLABEL_CONFIRM.getCaption(locale));
         confirmSettings.setOnMouseClicked(event -> {
             /*
             workaround for replacing
@@ -273,7 +265,7 @@ public class JavaFXFrontend extends Application {
         GridPane.setRowIndex(confirmSettings, 2);
         Button cancelSettings = new Button();
         cancelSettings.setCancelButton(true);
-        cancelSettings.setText(Message.BUTTONLABEL_CANCEL.getCaption(this));
+        cancelSettings.setText(Message.BUTTONLABEL_CANCEL.getCaption(locale));
         cancelSettings.setOnMouseClicked(event -> {
             limitSettingInput.setText(this.readMaxLengthFromConfig() + "");
             settingsStage.hide();
@@ -282,7 +274,7 @@ public class JavaFXFrontend extends Application {
         GridPane.setColumnIndex(cancelSettings, 1);
         subroot4.getChildren().addAll(limitSettingLabel, limitSettingInput, radioButtonFrame, confirmSettings, cancelSettings);
         Scene settingsScene = new Scene(subroot4);
-        settingsStage.setTitle(Message.MISC_SETTINGS.getCaption(this));
+        settingsStage.setTitle(Message.MISC_SETTINGS.getCaption(locale));
         settingsStage.setScene(settingsScene);
         settingsStage.initStyle(StageStyle.DECORATED);
         settingsStage.initModality(Modality.NONE);
@@ -290,43 +282,59 @@ public class JavaFXFrontend extends Application {
         ToolBar top = new ToolBar();
         MenuBar menu = new MenuBar();
         Menu actualMenu = new Menu();
-        actualMenu.setText(Message.MISC_ALGORITHMS.getCaption(this));
+        actualMenu.setText(Message.MISC_ALGORITHMS.getCaption(locale));
         menu.getMenus().add(actualMenu);
         ToggleGroup menuGroup = new ToggleGroup();
         this.core = new BurrowsWheelerTransformationCore(this.readMaxLengthFromConfig());
         this.impls = new ArrayList<>();
         ViewerPaneContainer paneContainer = new ViewerPaneContainer();
+        StackPane viewerPack = new StackPane();
         for (BurrowsWheelerTransformationCore.Algorithms algorithm : BurrowsWheelerTransformationCore.Algorithms.values()) {
-            RadioMenuItem item = new RadioMenuItem(AlgorithmUtils.algorithmCaption(algorithm, this.locale));
+            RadioMenuItem item = new RadioMenuItem(AlgorithmUtils.algorithmCaption(algorithm, locale));
             item.setToggleGroup(menuGroup);
             this.impls.add(AlgorithmUtils.createAlgorithm(this.core, algorithm, popup1Stage::show, popup2Stage::show));
             actualMenu.getItems().add(item);
-            item.setOnAction(event -> {
-                if (!item.isSelected()) return;
-                paneContainer.setPane(this.impls.get(algorithm.ordinal()).getViewer(primaryStage));
-                this.currentQueue = this.core.getRegisteredAlgorithm(algorithm);
-            });
+            viewerPack.getChildren().add(this.impls.get(algorithm.ordinal()).getViewer(primaryStage));
         }
-        root.setCenter(paneContainer);
+        for (Node viewerPane : viewerPack.getChildren()) {
+            viewerPane.setVisible(false);
+        }/*
+        for (MenuItem item : actualMenu.getItems()) {
+            item.setOnAction(event -> {
+                if (((RadioMenuItem)item).isSelected()) {
+                    this.currentQueue = this.core.getRegisteredAlgorithm(BurrowsWheelerTransformationCore.Algorithms.values()[menuGroup.getToggles().indexOf(menuGroup.getSelectedToggle())]);
+                }
+                for (Node node : viewerPack.getChildren()) {
+                    node.setVisible(((ViewerPane)node).isAssociatedWith(BurrowsWheelerTransformationCore.Algorithms.values()[menuGroup.getToggles().indexOf(menuGroup.getSelectedToggle())]));
+                }
+            });
+        }*/
+        menuGroup.selectedToggleProperty().addListener(event -> {
+            this.currentQueue = this.core.getRegisteredAlgorithm(BurrowsWheelerTransformationCore.Algorithms.values()[menuGroup.getToggles().indexOf(menuGroup.getSelectedToggle())]);
+            for (Node node : viewerPack.getChildren()) {
+                node.setVisible(((ViewerPane)node).isAssociatedWith(BurrowsWheelerTransformationCore.Algorithms.values()[menuGroup.getToggles().indexOf(menuGroup.getSelectedToggle())]));
+            }
+        });
+        root.setCenter(viewerPack);
         top.getItems().add(menu);
         Button back = new Button();
-        back.setTooltip(new Tooltip(Message.TOOLTIP_BACK.getCaption(this)));
+        back.setTooltip(new Tooltip(Message.TOOLTIP_BACK.getCaption(locale)));
         back.setGraphic(new ImageView(new Image("assets/back.png")));
         back.setOnMouseClicked(event -> this.currentQueue.stepBack());
         top.getItems().add(back);
         Button forward = new Button();
-        forward.setTooltip(new Tooltip(Message.TOOLTIP_FORWARD.getCaption(this)));
+        forward.setTooltip(new Tooltip(Message.TOOLTIP_FORWARD.getCaption(locale)));
         forward.setGraphic(new ImageView(new Image("assets/forward.png")));
         forward.setOnMouseClicked(event -> this.currentQueue.stepForward());
         top.getItems().add(forward);
         Button settings = new Button();
-        settings.setTooltip(new Tooltip(Message.MISC_SETTINGS.getCaption(this)));
+        settings.setTooltip(new Tooltip(Message.MISC_SETTINGS.getCaption(locale)));
         settings.setGraphic(new ImageView(new Image("assets/settings.png")));
         settings.setOnMouseClicked(event -> settingsStage.show());
         top.getItems().add(settings);
         root.setTop(top);
         Scene mainWindow = new Scene(root, Math.max(top.getWidth(), paneContainer.getLayoutX()), top.getHeight() + paneContainer.getLayoutY());
-        primaryStage.setTitle(Message.HEAD_MAIN.getCaption(this));
+        primaryStage.setTitle(Message.HEAD_MAIN.getCaption(locale));
         primaryStage.setScene(mainWindow);
         primaryStage.show();
     }

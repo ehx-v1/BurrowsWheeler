@@ -1,6 +1,7 @@
 package core;
 
 import gui.ViewerPane;
+import javafx.scene.layout.HBox;
 import util.runtimeframework.DebugQueue;
 import util.runtimeframework.DebugStep;
 
@@ -18,13 +19,12 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
-import java.util.Collections;
-import java.util.Comparator;
+import java.util.*;
 
 /**
  * Created by root on 14.04.2017.
  */
-public class BurrowsWheelerFastDecoding implements BurrowsWheelerTransformationCore.AlgorithmImplementationStub {
+public class BurrowsWheelerFastDecoding extends Observable implements BurrowsWheelerTransformationCore.AlgorithmImplementationStub {
 
     protected static class IndexedCharacter implements Comparable<IndexedCharacter> {
         private char content;
@@ -118,7 +118,6 @@ public class BurrowsWheelerFastDecoding implements BurrowsWheelerTransformationC
     @Override
     public ViewerPane getViewer(Stage stage) {
         return new ViewerPane() {
-            private ObservableList<Node> childrenCache;
             private TextField inputField = new TextField();
             private TextField indexField = new TextField();
             private Button launcher = new Button();
@@ -190,15 +189,26 @@ public class BurrowsWheelerFastDecoding implements BurrowsWheelerTransformationC
             }
 
             @Override
-            protected ObservableList<Node> getChildren() {
-                if (this.childrenCache == null) {
-                    this.childrenCache = FXCollections.observableArrayList();
-                    this.childrenCache.add(this.inputField);
-                    this.childrenCache.add(this.indexField);
-                    this.childrenCache.add(this.launcher);
-                }
-                return this.childrenCache;
+            public void update(Observable o, Object arg) {
+                // nothing to update in this algorithm
             }
-        };
+
+            @Override
+            public boolean isAssociatedWith (BurrowsWheelerTransformationCore.Algorithms algorithm) {
+                return algorithm == BurrowsWheelerTransformationCore.Algorithms.BW_STANDARD_DECODE_FAST;
+            }
+
+            @Override
+            public ObservableList<Node> getChildren() {
+                ObservableList<Node> nodes = FXCollections.observableArrayList();
+                HBox topLine = new HBox();
+                topLine.getChildren().add(this.inputField);
+                topLine.getChildren().add(this.indexField);
+                topLine.getChildren().add(this.launcher);
+                nodes.add(topLine);
+                nodes.add(this.matching);
+                return FXCollections.unmodifiableObservableList(nodes);
+            }
+        }; // normally it would be added to the algorithm's observers, but there's no content in this algorithm that could not be observed by a dedicated observer
     }
 }

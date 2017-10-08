@@ -9,18 +9,16 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Observable;
-import java.util.Observer;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -74,7 +72,7 @@ public class BurrowsWheelerPermutationDecoding extends BurrowsWheelerIntuitiveDe
 
     @Override
     public ViewerPane getViewer(Stage stage) {
-        return new ViewerPane() {
+        ViewerPane pane = new ViewerPane() {
             private TextField inputField = new TextField();
             private TextField indexField = new TextField();
             private TextField permutationIndexField = new TextField();
@@ -87,6 +85,7 @@ public class BurrowsWheelerPermutationDecoding extends BurrowsWheelerIntuitiveDe
             private Stage indexOutOfWordErrorWindow = new Stage();
             private Stage indexNotANumberErrorWindow = new Stage();
             private Stage wordLengthExceedsLimitErrorWindow = new Stage();
+            private List<UpdateLinker> linkers = new ArrayList<>();
 
             { // TODO position children
                 StackPane error1Root = new StackPane(); // TODO replace with appropriate layout element
@@ -163,7 +162,13 @@ public class BurrowsWheelerPermutationDecoding extends BurrowsWheelerIntuitiveDe
                                         }
                                     }
                                 });
-                                // TODO ensure clean update on sorting
+                                this.linkers.add(() -> {
+                                    ObservableList<Node> matrix = this.table.getChildren();
+                                    for (int i1 = 0; i1 < matrix.size(); i1++) {
+                                        ((TextField) matrix.get(i1)).setText(BurrowsWheelerPermutationDecoding.this.inputTable[i1].toString());
+                                    }
+                                    this.layout();
+                                });
                                 GridPane.setRowIndex(matrixField, i);
                                 GridPane.setColumnIndex(matrixField, j);
                                 this.table.getChildren().add(matrixField);
@@ -193,11 +198,11 @@ public class BurrowsWheelerPermutationDecoding extends BurrowsWheelerIntuitiveDe
                         return this.actualPermutation.get(original);
                     }
                 };
-                StackPane subroot = new StackPane(); // TODO replace with appropriate layout element
+                VBox subroot = new VBox();
                 // fill actualPermutationMenu with permutation mapping text fields and a confirm button that sets the permutation mappings
                 TextField[] labelFields = new TextField[26];
                 TextField[] inputFields = new TextField[26];
-                for (char c = 'a'; c < 'z'; c++) {
+                for (char c = 'a'; c <= 'z'; c++) {
                     labelFields[c - 'a'] = new TextField();
                     labelFields[c - 'a'].setEditable(false);
                     labelFields[c - 'a'].setText(c + "");
@@ -230,6 +235,15 @@ public class BurrowsWheelerPermutationDecoding extends BurrowsWheelerIntuitiveDe
                 this.permutationMenu.setOnMouseClicked(event -> this.actualPermutationMenu.show());
             }
 
+            @Override
+            public void update(Observable o, Object arg) {
+                if (o == BurrowsWheelerPermutationDecoding.this) {
+                    for (UpdateLinker linker : this.linkers) {
+                        linker.adjustContent();
+                    }
+                }
+            }
+
             private boolean[] parseFlags(int flagContainer, int sizeToParse) {
                 boolean[] result = new boolean[sizeToParse];
                 for (int i = 0; i < sizeToParse; i++) {
@@ -240,14 +254,23 @@ public class BurrowsWheelerPermutationDecoding extends BurrowsWheelerIntuitiveDe
             }
 
             @Override
-            protected ObservableList<Node> getChildren() {
+            public boolean isAssociatedWith (BurrowsWheelerTransformationCore.Algorithms algorithm) {
+                return algorithm == BurrowsWheelerTransformationCore.Algorithms.BW_PERMUTATIONS_DECODE;
+            }
+
+            @Override
+            public ObservableList<Node> getChildren() {
                 ObservableList<Node> nodes = FXCollections.observableArrayList();
-                nodes.add(this.inputField);
-                nodes.add(this.indexField);
-                nodes.add(this.launcher);
+                HBox topLine = new HBox();
+                topLine.getChildren().add(this.inputField);
+                topLine.getChildren().add(this.indexField);
+                topLine.getChildren().add(this.launcher);
+                nodes.add(topLine);
                 nodes.add(this.permutationMenu);
-                return nodes;
+                return FXCollections.unmodifiableObservableList(nodes);
             }
         };
+        this.addObserver(pane);
+        return pane;
     }
 }

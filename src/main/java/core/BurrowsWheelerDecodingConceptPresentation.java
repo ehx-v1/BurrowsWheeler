@@ -5,6 +5,8 @@ import javafx.stage.Stage;
 import util.runtimeframework.DebugQueue;
 import util.runtimeframework.DebugStep;
 
+import java.util.Observable;
+
 /**
  * Created by root on 14.04.2017.
  */
@@ -31,6 +33,17 @@ public class BurrowsWheelerDecodingConceptPresentation implements BurrowsWheeler
     public ViewerPane getViewer(Stage stage) {
         return new ViewerPane(){
             // TODO
+
+            @Override
+            public boolean isAssociatedWith (BurrowsWheelerTransformationCore.Algorithms algorithm) {
+                return algorithm == BurrowsWheelerTransformationCore.Algorithms.BW_STANDARD_DECODE_SHOWGENERALIDEAS;
+            }
+
+            @Override
+            public void update(Observable o, Object arg) {
+
+            }
+
         };
     }
 }
