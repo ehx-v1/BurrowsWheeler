@@ -1,5 +1,9 @@
 package gui;
 
+/**
+ * Created by root on 10.10.2017.
+ */
+
 import core.BurrowsWheelerTransformationCore;
 import javafx.scene.Node;
 import javafx.scene.control.*;
@@ -9,11 +13,8 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import util.ThisShouldNotHappenException;
-import util.runtimeframework.DebugQueue;
 import util.AlgorithmUtils;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Properties;
 
 import java.io.File;
@@ -33,7 +34,7 @@ import javafx.scene.layout.StackPane;
 /**
  * Created by root on 14.04.2017.
  */
-public class JavaFXFrontend extends Application {
+public class TestingUI extends Application {
 
     private enum Message {
         HEAD_MAIN,
@@ -149,9 +150,6 @@ public class JavaFXFrontend extends Application {
 
     }
 
-    private BurrowsWheelerTransformationCore core;
-    private List<BurrowsWheelerTransformationCore.AlgorithmImplementationStub> impls;
-    private DebugQueue currentQueue;
     private Properties config;
     public final static String PROPERTY_FILE = "config.properties";
     public final static String MAXLENGTH_PROPERTY = "maxLength";
@@ -284,39 +282,33 @@ public class JavaFXFrontend extends Application {
         Menu actualMenu = new Menu();
         actualMenu.setText(Message.MISC_ALGORITHMS.getCaption(locale));
         menu.getMenus().add(actualMenu);
-        ToggleGroup menuGroup = new ToggleGroup();
-        this.core = new BurrowsWheelerTransformationCore(this.readMaxLengthFromConfig());
-        this.impls = new ArrayList<>();
         StackPane viewerPack = new StackPane();
         for (BurrowsWheelerTransformationCore.Algorithms algorithm : BurrowsWheelerTransformationCore.Algorithms.values()) {
-            RadioMenuItem item = new RadioMenuItem(AlgorithmUtils.algorithmCaption(algorithm, locale));
-            item.setToggleGroup(menuGroup);
-            this.impls.add(AlgorithmUtils.createAlgorithm(this.core, algorithm, popup1Stage::show, popup2Stage::show));
+            MenuItem item = new MenuItem(AlgorithmUtils.algorithmCaption(algorithm, locale));
             actualMenu.getItems().add(item);
-            viewerPack.getChildren().add(this.impls.get(algorithm.ordinal()).getViewer(primaryStage));
+            TextField dummyViewable = new TextField();
+            dummyViewable.setText(AlgorithmUtils.algorithmCaptionDE(algorithm));
+            dummyViewable.setEditable(false);
+            dummyViewable.setVisible(false);
+            viewerPack.getChildren().add(dummyViewable);
+            item.setOnAction(event -> {
+                for (Node viewerPane : viewerPack.getChildren()) {
+                    viewerPane.setVisible(viewerPane == dummyViewable);
+                }
+                viewerPack.layout();
+            });
         }
-        for (Node viewerPane : viewerPack.getChildren()) {
-            viewerPane.setVisible(false);
-        }
-        menuGroup.selectedToggleProperty().addListener(event -> {
-            System.out.println(menuGroup.getSelectedToggle() == null);
-            this.currentQueue = this.core.getRegisteredAlgorithm(AlgorithmUtils.byCaption(((RadioMenuItem)menuGroup.getSelectedToggle()).getText()));
-            for (Node node : viewerPack.getChildren()) {
-                node.setVisible(((ViewerPane)node).isAssociatedWith(AlgorithmUtils.byCaption(((RadioMenuItem)menuGroup.getSelectedToggle()).getText())));
-            }
-            viewerPack.layout();
-        });
         root.setCenter(viewerPack);
         top.getItems().add(menu);
         Button back = new Button();
         back.setTooltip(new Tooltip(Message.TOOLTIP_BACK.getCaption(locale)));
         back.setGraphic(new ImageView(new Image("assets/back.png")));
-        back.setOnMouseClicked(event -> this.currentQueue.stepBack());
+        back.setOnMouseClicked(event -> System.out.println("Would step back"));
         top.getItems().add(back);
         Button forward = new Button();
         forward.setTooltip(new Tooltip(Message.TOOLTIP_FORWARD.getCaption(locale)));
         forward.setGraphic(new ImageView(new Image("assets/forward.png")));
-        forward.setOnMouseClicked(event -> this.currentQueue.stepForward());
+        forward.setOnMouseClicked(event -> System.out.println("Would step forward"));
         top.getItems().add(forward);
         Button settings = new Button();
         settings.setTooltip(new Tooltip(Message.MISC_SETTINGS.getCaption(locale)));
@@ -359,15 +351,17 @@ public class JavaFXFrontend extends Application {
     }
 
     private OutputStream initFileAndMakeStream() throws IOException {
-            File propertyFile = new File(PROPERTY_FILE);
-            if (!propertyFile.exists()) {
-                propertyFile.createNewFile();
-            }
-            return new FileOutputStream(propertyFile);
+        File propertyFile = new File(PROPERTY_FILE);
+        if (!propertyFile.exists()) {
+            propertyFile.createNewFile();
+        }
+        return new FileOutputStream(propertyFile);
     }
 
     public static void main(String[] args) {
-        Application.launch(JavaFXFrontend.class, args);
+        Application.launch(TestingUI.class, args);
     }
 
 }
+
+

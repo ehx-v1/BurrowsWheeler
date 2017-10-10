@@ -86,4 +86,29 @@ public class AlgorithmUtils {
         }
     }
 
+    public static BurrowsWheelerTransformationCore.Algorithms byCaption (String caption) {
+        switch (caption) {
+            case "Vorwärtstransformation":
+            case "Forward-side standard transformation":
+                return BurrowsWheelerTransformationCore.Algorithms.BW_STANDARD_ENCODE;
+            case "Allgemeines zur Rückwärtstransformation":
+            case "General backward-side concepts":
+                return BurrowsWheelerTransformationCore.Algorithms.BW_STANDARD_DECODE_SHOWGENERALIDEAS;
+            case "Rückwärtstransformation, performanteres Verfahren":
+            case "More performant backward-side standard transformation":
+                return BurrowsWheelerTransformationCore.Algorithms.BW_STANDARD_DECODE_FAST;
+            case "Rückwärtstransformation, verständlicheres Verfahren":
+            case "More simple backward-side standard transformation":
+                return BurrowsWheelerTransformationCore.Algorithms.BW_STANDARD_DECODE_INTUITIVE;
+            case "Permutations-Variante Vorwärtstransformation":
+            case "Forward-side permutational transformation":
+                return BurrowsWheelerTransformationCore.Algorithms.BW_PERMUTATIONS_ENCODE;
+            case "Permutations-Variante Rückwärtstransformation":
+            case "Backward-side permutational transformation":
+                return BurrowsWheelerTransformationCore.Algorithms.BW_PERMUTATIONS_DECODE;
+            default:
+                throw new IllegalArgumentException("Caption has no corresponding enum value");
+        }
+    }
+
 }
