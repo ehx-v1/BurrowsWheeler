@@ -150,7 +150,7 @@ public class JavaFXFrontend extends Application {
     }
 
     private BurrowsWheelerTransformationCore core;
-    private List<BurrowsWheelerTransformationCore.AlgorithmImplementationStub> impls;
+    private List<BurrowsWheelerTransformationCore.AlgorithmImplementationStub> impls = new ArrayList<>();
     private DebugQueue currentQueue;
     private Properties config;
     public final static String PROPERTY_FILE = "config.properties";
@@ -286,26 +286,23 @@ public class JavaFXFrontend extends Application {
         menu.getMenus().add(actualMenu);
         ToggleGroup menuGroup = new ToggleGroup();
         this.core = new BurrowsWheelerTransformationCore(this.readMaxLengthFromConfig());
-        this.impls = new ArrayList<>();
         StackPane viewerPack = new StackPane();
         for (BurrowsWheelerTransformationCore.Algorithms algorithm : BurrowsWheelerTransformationCore.Algorithms.values()) {
             RadioMenuItem item = new RadioMenuItem(AlgorithmUtils.algorithmCaption(algorithm, locale));
             item.setToggleGroup(menuGroup);
             this.impls.add(AlgorithmUtils.createAlgorithm(this.core, algorithm, popup1Stage::show, popup2Stage::show));
             actualMenu.getItems().add(item);
-            viewerPack.getChildren().add(this.impls.get(algorithm.ordinal()).getViewer(primaryStage));
+            ViewerPane currentPane = this.impls.get(algorithm.ordinal()).getViewer(primaryStage);
+            currentPane.setVisible(false);
+            item.setOnAction(event -> {
+                this.currentQueue = this.core.getRegisteredAlgorithm(algorithm);
+                for (Node node : viewerPack.getChildren()) {
+                    node.setVisible(node == currentPane);
+                }
+                viewerPack.layout();
+            });
+            viewerPack.getChildren().add(currentPane);
         }
-        for (Node viewerPane : viewerPack.getChildren()) {
-            viewerPane.setVisible(false);
-        }
-        menuGroup.selectedToggleProperty().addListener(event -> {
-            System.out.println(menuGroup.getSelectedToggle() == null);
-            this.currentQueue = this.core.getRegisteredAlgorithm(AlgorithmUtils.byCaption(((RadioMenuItem)menuGroup.getSelectedToggle()).getText()));
-            for (Node node : viewerPack.getChildren()) {
-                node.setVisible(((ViewerPane)node).isAssociatedWith(AlgorithmUtils.byCaption(((RadioMenuItem)menuGroup.getSelectedToggle()).getText())));
-            }
-            viewerPack.layout();
-        });
         root.setCenter(viewerPack);
         top.getItems().add(menu);
         Button back = new Button();

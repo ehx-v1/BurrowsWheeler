@@ -1,9 +1,5 @@
 package gui;
 
-/**
- * Created by root on 10.10.2017.
- */
-
 import core.BurrowsWheelerTransformationCore;
 import javafx.scene.Node;
 import javafx.scene.control.*;
