@@ -1,11 +1,12 @@
 package core;
 
-import gui.ViewerPane;
-import javafx.stage.Stage;
 import util.runtimeframework.DebugQueue;
 import util.runtimeframework.DebugStep;
+import gui.ViewerPane;
 
 import java.util.Observable;
+
+import javafx.stage.Stage;
 
 /**
  * Created by root on 14.04.2017.

@@ -1,24 +1,27 @@
 package core;
 
 import gui.ViewerPane;
-import javafx.scene.layout.HBox;
 import util.runtimeframework.DebugQueue;
 import util.runtimeframework.DebugStep;
 
-import javafx.stage.Stage;
-import javafx.stage.Modality;
-import javafx.stage.StageStyle;
-import javafx.scene.Scene;
-import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.GridPane;
-import javafx.collections.FXCollections;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
+
 import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
-
-import java.util.*;
+import javafx.scene.Node;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 /**
  * Created by root on 14.04.2017.
@@ -225,6 +228,12 @@ public class BurrowsWheelerIntuitiveDecoding extends Observable implements Burro
                         this.indexNotANumberErrorWindow.show();
                     }
                 });
+                HBox topLine = new HBox();
+                topLine.getChildren().add(this.inputField);
+                topLine.getChildren().add(this.indexField);
+                topLine.getChildren().add(this.launcher);
+                this.getChildren().add(topLine);
+                this.getChildren().add(this.table);
             }
 
             @Override
@@ -239,18 +248,6 @@ public class BurrowsWheelerIntuitiveDecoding extends Observable implements Burro
             @Override
             public boolean isAssociatedWith (BurrowsWheelerTransformationCore.Algorithms algorithm) {
                 return algorithm == BurrowsWheelerTransformationCore.Algorithms.BW_STANDARD_DECODE_INTUITIVE;
-            }
-
-            @Override
-            public ObservableList<Node> getChildren() {
-                ObservableList<Node> nodes = FXCollections.observableArrayList();
-                HBox topLine = new HBox();
-                topLine.getChildren().add(this.inputField);
-                topLine.getChildren().add(this.indexField);
-                topLine.getChildren().add(this.launcher);
-                nodes.add(topLine);
-                nodes.add(this.table);
-                return FXCollections.unmodifiableObservableList(nodes);
             }
         };
         this.addObserver(pane);

@@ -1,25 +1,26 @@
 package core;
 
 import gui.ViewerPane;
-import javafx.scene.layout.HBox;
 import util.runtimeframework.DebugQueue;
 import util.runtimeframework.DebugStep;
+
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Observable;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-
-import java.util.*;
 
 /**
  * Created by root on 14.04.2017.
@@ -186,6 +187,12 @@ public class BurrowsWheelerFastDecoding extends Observable implements BurrowsWhe
                         this.indexNotANumberErrorWindow.show();
                     }
                 });
+                HBox topLine = new HBox();
+                topLine.getChildren().add(this.inputField);
+                topLine.getChildren().add(this.indexField);
+                topLine.getChildren().add(this.launcher);
+                this.getChildren().add(topLine);
+                this.getChildren().add(this.matching);
             }
 
             @Override
@@ -196,18 +203,6 @@ public class BurrowsWheelerFastDecoding extends Observable implements BurrowsWhe
             @Override
             public boolean isAssociatedWith (BurrowsWheelerTransformationCore.Algorithms algorithm) {
                 return algorithm == BurrowsWheelerTransformationCore.Algorithms.BW_STANDARD_DECODE_FAST;
-            }
-
-            @Override
-            public ObservableList<Node> getChildren() {
-                ObservableList<Node> nodes = FXCollections.observableArrayList();
-                HBox topLine = new HBox();
-                topLine.getChildren().add(this.inputField);
-                topLine.getChildren().add(this.indexField);
-                topLine.getChildren().add(this.launcher);
-                nodes.add(topLine);
-                nodes.add(this.matching);
-                return FXCollections.unmodifiableObservableList(nodes);
             }
         }; // normally it would be added to the algorithm's observers, but there's no content in this algorithm that could not be observed by a dedicated observer
     }

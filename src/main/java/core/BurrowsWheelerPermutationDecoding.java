@@ -2,6 +2,17 @@ package core;
 
 import gui.ViewerPane;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Observable;
+import java.util.Observer;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -15,12 +26,6 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * Created by root on 14.04.2017.
@@ -233,6 +238,12 @@ public class BurrowsWheelerPermutationDecoding extends BurrowsWheelerIntuitiveDe
                 // TODO set icon of permutationMenu
                 this.permutationMenu.setTooltip(new Tooltip("Set permutation..."));
                 this.permutationMenu.setOnMouseClicked(event -> this.actualPermutationMenu.show());
+                HBox topLine = new HBox();
+                topLine.getChildren().add(this.inputField);
+                topLine.getChildren().add(this.indexField);
+                topLine.getChildren().add(this.launcher);
+                this.getChildren().add(topLine);
+                this.getChildren().add(this.permutationMenu);
             }
 
             @Override
@@ -256,18 +267,6 @@ public class BurrowsWheelerPermutationDecoding extends BurrowsWheelerIntuitiveDe
             @Override
             public boolean isAssociatedWith (BurrowsWheelerTransformationCore.Algorithms algorithm) {
                 return algorithm == BurrowsWheelerTransformationCore.Algorithms.BW_PERMUTATIONS_DECODE;
-            }
-
-            @Override
-            public ObservableList<Node> getChildren() {
-                ObservableList<Node> nodes = FXCollections.observableArrayList();
-                HBox topLine = new HBox();
-                topLine.getChildren().add(this.inputField);
-                topLine.getChildren().add(this.indexField);
-                topLine.getChildren().add(this.launcher);
-                nodes.add(topLine);
-                nodes.add(this.permutationMenu);
-                return FXCollections.unmodifiableObservableList(nodes);
             }
         };
         this.addObserver(pane);

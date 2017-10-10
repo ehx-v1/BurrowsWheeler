@@ -1,7 +1,17 @@
 package core;
 
 import gui.ViewerPane;
-import javafx.collections.FXCollections;
+import util.AlgorithmUtils;
+import util.ThisShouldNotHappenException;
+import util.runtimeframework.DebugQueue;
+import util.runtimeframework.DebugStep;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
+
 import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -9,16 +19,11 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import util.AlgorithmUtils;
-import util.ThisShouldNotHappenException;
-import util.runtimeframework.DebugQueue;
-import util.runtimeframework.DebugStep;
-
-import java.util.*;
 
 /**
  * Created by root on 14.04.2017.
@@ -206,6 +211,11 @@ public class BurrowsWheelerStandardEncoding extends Observable implements Burrow
                         }
                     }
                 });
+                HBox topBox = new HBox();
+                topBox.getChildren().add(this.inputField);
+                topBox.getChildren().add(this.launcher);
+                this.getChildren().add(topBox);
+                this.getChildren().add(this.table);
             }
 
             @Override
@@ -220,15 +230,6 @@ public class BurrowsWheelerStandardEncoding extends Observable implements Burrow
             @Override
             public boolean isAssociatedWith (BurrowsWheelerTransformationCore.Algorithms algorithm) {
                 return algorithm == BurrowsWheelerTransformationCore.Algorithms.BW_STANDARD_ENCODE;
-            }
-
-            @Override
-            public ObservableList<Node> getChildren() {
-                ObservableList<Node> nodes = FXCollections.observableArrayList();
-                nodes.add(this.inputField);
-                nodes.add(this.launcher);
-                nodes.add(this.table);
-                return FXCollections.unmodifiableObservableList(nodes);
             }
         };
         this.addObserver(pane);

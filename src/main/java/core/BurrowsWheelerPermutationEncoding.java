@@ -1,29 +1,34 @@
 package core;
 
 import gui.ViewerPane;
-import javafx.scene.layout.HBox;
 import util.AlgorithmUtils;
 import util.ThisShouldNotHappenException;
 import util.runtimeframework.DebugQueue;
 import util.runtimeframework.DebugStep;
 
-import javafx.collections.FXCollections;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Observable;
+import java.util.Observer;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.stage.Stage;
-import javafx.stage.StageStyle;
-import javafx.stage.Modality;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
-
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 /**
  * Created by root on 14.04.2017.
@@ -248,6 +253,12 @@ public class BurrowsWheelerPermutationEncoding extends BurrowsWheelerStandardEnc
                 // TODO set icon of permutationMenu
                 this.permutationMenu.setTooltip(new Tooltip("Set permutation..."));
                 this.permutationMenu.setOnMouseClicked(event -> this.actualPermutationMenu.show());
+                HBox topLine = new HBox();
+                topLine.getChildren().add(this.inputField);
+                topLine.getChildren().add(this.permutationMenu);
+                topLine.getChildren().add(this.launcher);
+                this.getChildren().add(topLine);
+                this.getChildren().add(this.table);
             }
 
             @Override
@@ -262,18 +273,6 @@ public class BurrowsWheelerPermutationEncoding extends BurrowsWheelerStandardEnc
             @Override
             public boolean isAssociatedWith (BurrowsWheelerTransformationCore.Algorithms algorithm) {
                 return algorithm == BurrowsWheelerTransformationCore.Algorithms.BW_PERMUTATIONS_ENCODE;
-            }
-
-            @Override
-            public ObservableList<Node> getChildren() {
-                ObservableList<Node> nodes = FXCollections.observableArrayList();
-                HBox topLine = new HBox();
-                topLine.getChildren().add(this.inputField);
-                topLine.getChildren().add(this.permutationMenu);
-                topLine.getChildren().add(this.launcher);
-                nodes.add(topLine);
-                nodes.add(this.table);
-                return FXCollections.unmodifiableObservableList(nodes);
             }
         };
         this.addObserver(pane);
